@@ -6,8 +6,10 @@
   "directories": {
     "test": "test"
   },
-  "private": true,
   "main": "dist/index.js",
+  "bin": {
+    "tapout": "./dist/cli.js"
+  },
   "files": [
     "./dist/*"
   ],
