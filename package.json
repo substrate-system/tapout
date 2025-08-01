@@ -22,7 +22,8 @@
   },
   "scripts": {
     "lint": "eslint \"./**/*.{ts,js}\"",
-    "test": "npm run test:all-examples",
+    "test": "esbuild test/index.ts --platform=node --format=esm --keep-names --bundle | node --input-type=module | tap-spec",
+    "test:unit": "esbuild test/index.ts --platform=node --format=esm --keep-names --bundle | node --input-type=module | tap-spec",
     "test:simple": "cat test/simple-test.js | node dist/cli.js",
     "test:complex": "cat test/tape-test.js | node dist/cli.js",
     "test:failing": "cat test/failing-test.js | node dist/cli.js",

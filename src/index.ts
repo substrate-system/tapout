@@ -1,11 +1,8 @@
 import { chromium } from 'playwright'
 import { createServer } from 'http-server'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { promises as fs } from 'fs'
 import { tmpdir } from 'os'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export async function readStdin (): Promise<string> {
     return new Promise((resolve, reject) => {
