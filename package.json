@@ -32,8 +32,9 @@
     "build-esm": "esbuild src/*.ts --format=esm --metafile=dist/meta.json --keep-names --tsconfig=tsconfig.build.json --outdir=./dist --sourcemap && tsc --emitDeclarationOnly --project tsconfig.build.json --outDir dist && cp src/test-runner.html dist/",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-esm",
     "toc": "markdown-toc --maxdepth 3 -i README.md",
+    "changelog": "auto-changelog -p --template keepachangelog --breaking-pattern 'BREAKING CHANGE:'",
     "preversion": "npm run lint",
-    "version": "npm run toc && auto-changelog -p --template keepachangelog --breaking-pattern 'BREAKING CHANGE:' && git add CHANGELOG.md README.md",
+    "version": "npm run toc && npm run changelog && git add CHANGELOG.md README.md",
     "postversion": "git push --follow-tags && npm publish",
     "prepublishOnly": "npm run build"
   },

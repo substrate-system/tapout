@@ -10,10 +10,21 @@
 
 Run tests in a browser from the command line.
 
-The easiest way to do browser tests. Just pipe some JS into this command.
+The easiest way to test in a browser. Just pipe some JS into this command.
+
+This uses [playwright](https://playwright.dev/) to create a browser environment.
 
 <details><summary><h2>Contents</h2></summary>
+
 <!-- toc -->
+
+- [Install](#install)
+- [Use](#use)
+- [Example Tests](#example-tests)
+  * [More Examples](#more-examples)
+
+<!-- tocstop -->
+
 </details>
 
 ## Install
