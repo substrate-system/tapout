@@ -14,12 +14,28 @@ The easiest way to test in a browser. Just pipe some JS into this command.
 
 This uses [playwright](https://playwright.dev/) to create a browser environment.
 
+```
+Usage: tapout [options]
+            
+Options:
+  -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
+  -b, --browser <name>  Browser to use: chromium, firefox, webkit (default: chromium)
+  -h, --help           Show this help message
+
+Examples:
+  cat test.js | tapout --timeout 5000
+  cat test.js | tapout --browser firefox
+  cat test.js | tapout -b webkit -t 3000
+```
+
 <details><summary><h2>Contents</h2></summary>
 
 <!-- toc -->
 
 - [Install](#install)
 - [Use](#use)
+  * [`-b`, `--browser`](#-b---browser)
+  * [`-t`, `--timeout`](#-t---timeout)
 - [Example Tests](#example-tests)
   * [More Examples](#more-examples)
 
@@ -38,6 +54,21 @@ npm i -D @substrate-system/tapout
 ```sh
 cat ./test/index.js | npx tapout
 ```
+
+### `-b`, `--browser`
+
+Pass in the name of a browser to use. Default is Chrome.
+
+Possiblities are `chromium`, `firefox`, or `webkit`.
+
+### `-t`, `--timeout`
+
+Pass in a different timeout value. The default is 10 seconds.
+
+```sh
+cat test.js | npx tapout --timeout 5000
+```
+
 
 ## Example Tests
 
