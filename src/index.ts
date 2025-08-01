@@ -68,6 +68,10 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
 
         const browser = await browsers[browserType].launch()
         const page = await browser.newPage()
+        const browserName = browser.browserType().name()
+
+        // Output TAP comment indicating which browser is being used
+        console.log(`# Running tests in ${browserName}`)
 
         let hasErrors = false
 

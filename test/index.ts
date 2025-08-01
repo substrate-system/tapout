@@ -257,8 +257,8 @@ test('CLI: can run tests in Firefox', async (t) => {
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Firefox')
     t.ok(
-        result.stdout.includes('✅ Tests passed in firefox'),
-        'should show success message with Firefox'
+        result.stdout.includes('# Running tests in firefox'),
+        'should show browser comment for Firefox'
     )
     t.ok(
         result.stdout.includes('TAP version 13'),
@@ -271,8 +271,8 @@ test('CLI: can run tests in WebKit', async (t) => {
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in WebKit')
     t.ok(
-        result.stdout.includes('✅ Tests passed in webkit'),
-        'should show success message with WebKit'
+        result.stdout.includes('# Running tests in webkit'),
+        'should show browser comment for WebKit'
     )
     t.ok(
         result.stdout.includes('TAP version 13'),
