@@ -59,6 +59,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
 
         const browser = await chromium.launch()
         const page = await browser.newPage()
+        const browserName = browser.browserType().name()
 
         let hasErrors = false
 
@@ -97,7 +98,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
                     console.log('❌ Tests failed.')
                     throw new Error('Tests failed')
                 } else {
-                    console.log('✅ Tests passed in a browser.')
+                    console.log(`✅ Tests passed in ${browserName}.`)
                 }
             } catch (timeoutError: any) {
                 if (timeoutError.message && timeoutError.message.includes('Timeout')) {
