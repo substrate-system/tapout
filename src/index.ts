@@ -1,10 +1,18 @@
-import { chromium } from 'playwright'
+import { chromium, firefox, webkit, type BrowserType } from 'playwright'
 import { createServer } from 'http'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { promises as fs } from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+export type SupportedBrowser = 'chromium' | 'firefox' | 'webkit'
+
+const browsers: Record<SupportedBrowser, BrowserType> = {
+    chromium,
+    firefox,
+    webkit
+}
 
 export async function readStdin (): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -23,9 +31,10 @@ export async function readStdin (): Promise<string> {
     })
 }
 
-export async function runTestsInBrowser (testCode: string, options: { timeout?: number } = {}): Promise<void> {
+export async function runTestsInBrowser (testCode: string, options: { timeout?: number; browser?: SupportedBrowser } = {}): Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
+    const browserType = options.browser || 'chromium'
 
     // Custom server to serve static files and dynamic test code
     const server = createServer(async (req, res) => {
@@ -57,14 +66,14 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
     try {
         server.listen(PORT)
 
-        const browser = await chromium.launch()
+        const browser = await browsers[browserType].launch()
         const page = await browser.newPage()
 
         let hasErrors = false
 
         page.on('console', msg => {
             const text = msg.text()
-            console[msg.type()](`[browser] ${text}`)
+            console[msg.type()](text)
 
             // Detect TAP failures, errors, and specific failure patterns
             if (text.startsWith('not ok') ||
@@ -77,7 +86,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
         })
 
         page.on('pageerror', error => {
-            console.error(`[browser] Page error: ${error.message}`)
+            console.error(`Page error: ${error.message}`)
             hasErrors = true
         })
 
@@ -94,14 +103,12 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
                 const testsFailed = await page.evaluate(() => window.testsFailed)
 
                 if (hasErrors || testsFailed) {
-                    console.log('❌ Tests failed.')
                     throw new Error('Tests failed')
                 } else {
-                    console.log('✅ Tests passed in a browser.')
+                    // Tests passed - no additional output needed for TAP format
                 }
             } catch (timeoutError: any) {
                 if (timeoutError.message && timeoutError.message.includes('Timeout')) {
-                    console.log('❌ Tests timed out.')
                     throw new Error('Tests timed out')
                 } else {
                     throw timeoutError
