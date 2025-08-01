@@ -68,13 +68,12 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
 
         const browser = await browsers[browserType].launch()
         const page = await browser.newPage()
-        const browserName = browser.browserType().name()
 
         let hasErrors = false
 
         page.on('console', msg => {
             const text = msg.text()
-            console[msg.type()](`[browser] ${text}`)
+            console[msg.type()](text)
 
             // Detect TAP failures, errors, and specific failure patterns
             if (text.startsWith('not ok') ||
@@ -87,7 +86,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
         })
 
         page.on('pageerror', error => {
-            console.error(`[browser] Page error: ${error.message}`)
+            console.error(`Page error: ${error.message}`)
             hasErrors = true
         })
 
@@ -104,14 +103,12 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
                 const testsFailed = await page.evaluate(() => window.testsFailed)
 
                 if (hasErrors || testsFailed) {
-                    console.log('❌ Tests failed.')
                     throw new Error('Tests failed')
                 } else {
-                    console.log(`✅ Tests passed in ${browserName}.`)
+                    // Tests passed - no additional output needed for TAP format
                 }
             } catch (timeoutError: any) {
                 if (timeoutError.message && timeoutError.message.includes('Timeout')) {
-                    console.log('❌ Tests timed out.')
                     throw new Error('Tests timed out')
                 } else {
                     throw timeoutError
