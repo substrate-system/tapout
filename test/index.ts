@@ -22,10 +22,10 @@ interface TestResult {
     stderr: string
 }
 
-async function runCliTest (testFile: string): Promise<TestResult> {
+async function runCliTest (testFile: string, timeoutMs: number = 3000): Promise<TestResult> {
     return new Promise((resolve) => {
         const testPath = path.join(projectRoot, 'test', testFile)
-        const child = spawn('node', [cliPath], {
+        const child = spawn('node', [cliPath, '--timeout', timeoutMs.toString()], {
             cwd: projectRoot,
             stdio: ['pipe', 'pipe', 'pipe']
         })
@@ -72,15 +72,15 @@ async function runCliTest (testFile: string): Promise<TestResult> {
             })
         })
 
-        // Timeout after 15 seconds
+        // Timeout after CLI timeout + 2 seconds for overhead
         setTimeout(() => {
             child.kill('SIGTERM')
             resolve({
                 exitCode: null,
                 stdout,
-                stderr: stderr + 'Test timed out after 15 seconds'
+                stderr: stderr + `Test timed out after ${timeoutMs + 2000}ms`
             })
-        }, 15000)
+        }, timeoutMs + 2000)
     })
 }
 
@@ -147,7 +147,7 @@ test('CLI: failing test should fail', async (t) => {
 })
 
 test('CLI: timeout test should handle timeouts', async (t) => {
-    const result = await runCliTest('timeout-test.js')
+    const result = await runCliTest('timeout-test.js', 2000) // Use 2 second timeout for this test
 
     // This test might either timeout (exit code null) or auto-finish (exit code 0)
     // depending on the timing, both are acceptable behaviors
