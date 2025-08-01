@@ -10,7 +10,7 @@
 
 Run tests in a browser from the command line.
 
-The easiest way to do browser tests.
+The easiest way to do browser tests. Just pipe some JS into this command.
 
 <details><summary><h2>Contents</h2></summary>
 <!-- toc -->
@@ -19,25 +19,11 @@ The easiest way to do browser tests.
 ## Install
 
 ```sh
-npm i -S @substrate-system/tapout
+npm i -D @substrate-system/tapout
 ```
 
-## API
-
-This exposes ESM and common JS via [package.json `exports` field](https://nodejs.org/api/packages.html#exports).
-
-### ESM
-```js
-import '@substrate-system/tapout'
-```
-
-### Common JS
-```js
-require('@substrate-system/package/module')
-```
-
-## use
+## Use
 
 ```sh
-npx tapout ./test/index.js
+cat ./test/index.js | npx tapout
 ```

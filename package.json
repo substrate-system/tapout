@@ -29,7 +29,11 @@
     "postversion": "git push --follow-tags && npm publish",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@playwright/test": "^1.54.2",
+    "playwright": "^1.54.2",
+    "http-server": "^14.1.1"
+  },
   "devDependencies": {
     "@substrate-system/debug": "^0.9.2",
     "@substrate-system/tapzero": "^0.10.5",
