@@ -28,7 +28,24 @@ npm i -D @substrate-system/tapout
 cat ./test/index.js | npx tapout
 ```
 
-### Example Tests
+## Example Tests
+
+Write tests for the browser environment:
+
+```js
+// test/index.ts
+import { test } from '@substrate-system/tapzero'
+
+test('example', t => {
+    t.ok(document.body, 'should find a body tag')
+})
+```
+
+Run the tests on the command line.
+
+```sh
+npx esbuild ./test/index.ts | npx tapout
+```
 
 ```bash
 npm run test:simple     # Basic passing test
