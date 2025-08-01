@@ -47,6 +47,9 @@ Run the tests on the command line.
 npx esbuild ./test/index.ts | npx tapout
 ```
 
+
+### More Examples
+
 ```bash
 npm run test:simple     # Basic passing test
 npm run test:complex    # Complex async test  

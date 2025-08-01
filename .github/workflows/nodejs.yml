@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -16,10 +16,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: create env file
-        run: |
-          touch .env
-          echo "NPM_TOKEN=${{ secrets.NPM_TOKEN }}" >> .env
       - name: npm install, build
         run: |
           export $(cat .env | grep -v "#" | xargs) && npm install
