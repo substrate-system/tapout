@@ -27,3 +27,14 @@ npm i -D @substrate-system/tapout
 ```sh
 cat ./test/index.js | npx tapout
 ```
+
+### Example Tests
+
+```bash
+npm run test:simple     # Basic passing test
+npm run test:complex    # Complex async test  
+npm run test:failing    # Failing test (exits with code 1)
+npm run test:all-examples  # Run passing examples
+```
+
+See the [`test/` directory](./test/).

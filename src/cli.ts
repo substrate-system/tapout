@@ -9,7 +9,7 @@ async function main () {
             console.error('No test code provided via stdin')
             process.exit(1)
         }
-        
+
         await runTestsInBrowser(testCode)
     } catch (error) {
         console.error('Error running tests:', error)

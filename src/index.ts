@@ -10,16 +10,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export async function readStdin (): Promise<string> {
     return new Promise((resolve, reject) => {
         let data = ''
-        
+
         process.stdin.setEncoding('utf8')
         process.stdin.on('data', chunk => {
             data += chunk
         })
-        
+
         process.stdin.on('end', () => {
             resolve(data)
         })
-        
+
         process.stdin.on('error', reject)
     })
 }
@@ -28,12 +28,12 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
     const PORT = 8123
     const timeout = options.timeout || 10000
     const tempDir = await fs.mkdtemp(path.join(tmpdir(), 'tapout-'))
-    
+
     try {
         // Create the test bundle
         const bundlePath = path.join(tempDir, 'test-bundle.js')
         await fs.writeFile(bundlePath, testCode)
-        
+
         // Create test runner HTML
         const htmlPath = path.join(tempDir, 'test-runner.html')
         const htmlContent = `<!DOCTYPE html>
@@ -121,9 +121,9 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
     </script>
   </body>
 </html>`
-        
+
         await fs.writeFile(htmlPath, htmlContent)
-        
+
         // Serve static test files
         const server = createServer({ root: tempDir })
         server.listen(PORT)
@@ -132,11 +132,11 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
         const page = await browser.newPage()
 
         let hasErrors = false
-        
+
         page.on('console', msg => {
             const text = msg.text()
             console[msg.type()](`[browser] ${text}`)
-            
+
             // Detect TAP failures, errors, and specific failure patterns
             if (text.startsWith('not ok') ||
                 text.includes('Error:') ||
@@ -154,16 +154,16 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
 
         try {
             await page.goto(`http://localhost:${PORT}/test-runner.html`)
-            
+
             try {
                 // @ts-expect-error this runs in a browser
                 await page.waitForFunction(() => window.testsFinished === true, null, {
                     timeout
                 })
-                
+
                 // @ts-expect-error this runs in a browser
                 const testsFailed = await page.evaluate(() => window.testsFailed)
-                
+
                 if (hasErrors || testsFailed) {
                     console.log('❌ Tests failed.')
                     throw new Error('Tests failed')

@@ -22,7 +22,12 @@
   },
   "scripts": {
     "lint": "eslint \"./**/*.{ts,js}\"",
-    "test": "esbuild test/index.ts --platform=node --format=esm --keep-names --bundle | node --input-type=module | tap-spec",
+    "test": "npm run test:all-examples",
+    "test:simple": "cat test/simple-test.js | node dist/cli.js",
+    "test:complex": "cat test/tape-test.js | node dist/cli.js",
+    "test:failing": "cat test/failing-test.js | node dist/cli.js",
+    "test:timeout": "cat test/timeout-test.js | node dist/cli.js",
+    "test:all-examples": "npm run test:simple && npm run test:complex",
     "build-esm": "esbuild src/*.ts --format=esm --metafile=dist/meta.json --keep-names --tsconfig=tsconfig.build.json --outdir=./dist --sourcemap && tsc --emitDeclarationOnly --project tsconfig.build.json --outDir dist",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-esm",
     "toc": "markdown-toc --maxdepth 3 -i README.md",
