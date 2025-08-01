@@ -1,17 +1,94 @@
-<!-- test-runner.html -->
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test Runner</title>
+  </head>
   <body>
-    <script src="./test-bundle.js"></script>
-    <script>
-      runTests()
-        .then(() => {
-          console.log('✅ Browser tests complete')
+    <script type="module">
+      // Set up test completion detection
+      let hasFinished = false
+      let finishTimer = null
+      
+      function markTestsFinished() {
+        if (!hasFinished) {
+          hasFinished = true
           window.testsFinished = true
+        }
+      }
+      
+      // Auto-finish tests after a short delay if no explicit completion
+      function resetFinishTimer() {
+        if (finishTimer) clearTimeout(finishTimer)
+        finishTimer = setTimeout(() => {
+          if (!hasFinished && !window.testsFinished) {
+            console.log('Tests auto-finished (no explicit completion detected)')
+            markTestsFinished()
+          }
+        }, 1000)
+      }
+      
+      // Override console methods to detect test completion
+      const originalConsole = { ...console }
+      let lastLogTime = Date.now()
+      
+      console.log = function(...args) {
+        originalConsole.log(...args)
+        lastLogTime = Date.now()
+        // Only reset timer if we haven't seen logs for a while
+        if (!hasFinished) {
+          if (finishTimer) clearTimeout(finishTimer)
+          finishTimer = setTimeout(() => {
+            if (!hasFinished && !window.testsFinished && (Date.now() - lastLogTime) > 500) {
+              console.log('Tests auto-finished (no explicit completion detected)')
+              markTestsFinished()
+            }
+          }, 1000)
+        }
+      }
+      console.error = function(...args) {
+        originalConsole.error(...args)
+        lastLogTime = Date.now()
+      }
+      
+      // Common test completion patterns
+      window.addEventListener('load', () => {
+        resetFinishTimer()
+      })
+      
+      // Handle unhandled errors
+      window.addEventListener('error', (event) => {
+        console.error('Unhandled error:', event.error)
+        window.testsFailed = true
+        markTestsFinished()
+      })
+      
+      window.addEventListener('unhandledrejection', (event) => {
+        console.error('Unhandled promise rejection:', event.reason)
+        window.testsFailed = true
+        markTestsFinished()
+      })
+      
+      // Load and execute test code
+      fetch('./test-bundle.js')
+        .then(response => response.text())
+        .then(testCode => {
+          try {
+            // Execute the test code
+            eval(testCode)
+            
+            // Final fallback - mark as finished after code execution
+            resetFinishTimer()
+          } catch (error) {
+            console.error('Error executing test code:', error)
+            window.testsFailed = true
+            markTestsFinished()
+          }
         })
-        .catch(err => {
-          console.error('❌ Browser test failed:', err)
-          window.testsFinished = true
+        .catch(error => {
+          console.error('Error loading test code:', error)
+          window.testsFailed = true
+          markTestsFinished()
         })
     </script>
   </body>

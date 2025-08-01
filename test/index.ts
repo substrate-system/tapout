@@ -88,9 +88,18 @@ test('CLI: simple test should pass', async (t) => {
     const result = await runCliTest('simple-test.js')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0')
-    t.ok(result.stdout.includes('✅ Tests passed'), 'should show success message')
-    t.ok(result.stdout.includes('[browser] TAP version 13'), 'should show TAP output')
-    t.ok(result.stdout.includes('[browser] ok 1 - simple test'), 'should show test result')
+    t.ok(
+        result.stdout.includes('✅ Tests passed'),
+        'should show success message'
+    )
+    t.ok(
+        result.stdout.includes('[browser] TAP version 13'),
+        'should show TAP output'
+    )
+    t.ok(
+        result.stdout.includes('[browser] ok 1 - simple test'),
+        'should show test result'
+    )
 })
 
 test('CLI: complex test should pass', async (t) => {
@@ -123,9 +132,18 @@ test('CLI: failing test should fail', async (t) => {
     const result = await runCliTest('failing-test.js')
 
     t.equal(result.exitCode, 1, 'failing test should exit with code 1')
-    t.ok(result.stdout.includes('❌ Tests failed'), 'should show failure message')
-    t.ok(result.stdout.includes('[browser] not ok 2 - this test fails'), 'should show failing test')
-    t.ok(result.stdout.includes('Error executing test code') || result.stderr.includes('Error'), 'should show error')
+    t.ok(
+        result.stdout.includes('❌ Tests failed'),
+        'should show failure message'
+    )
+    t.ok(
+        result.stdout.includes('[browser] not ok 2 - this test fails'),
+        'should show failing test'
+    )
+    t.ok(
+        result.stdout.includes('Error executing test code') || result.stderr.includes('Error'),
+        'should show error'
+    )
 })
 
 test('CLI: timeout test should handle timeouts', async (t) => {
@@ -139,11 +157,15 @@ test('CLI: timeout test should handle timeouts', async (t) => {
     )
 
     if (result.exitCode === 0) {
-        t.ok(result.stdout.includes('✅ Tests passed') || result.stdout.includes('Tests auto-finished'),
-            'should auto-finish or pass')
+        t.ok(
+            result.stdout.includes('✅ Tests passed') || result.stdout.includes('Tests auto-finished'),
+            'should auto-finish or pass'
+        )
     } else if (result.exitCode === 1) {
-        t.ok(result.stdout.includes('❌ Tests timed out') || result.stdout.includes('❌ Tests failed'),
-            'should show timeout or failure message')
+        t.ok(
+            result.stdout.includes('❌ Tests timed out') || result.stdout.includes('❌ Tests failed'),
+            'should show timeout or failure message'
+        )
     }
 })
 
@@ -178,7 +200,10 @@ test('CLI: handles empty input', async (t) => {
     })
 
     t.equal(result.exitCode, 1, 'empty input should exit with code 1')
-    t.ok(result.stderr.includes('No test code provided'), 'should show empty input error')
+    t.ok(
+        result.stderr.includes('No test code provided'),
+        'should show empty input error'
+    )
 })
 
 test('CLI: handles invalid JavaScript', async (t) => {
