@@ -1,10 +1,18 @@
-import { chromium } from 'playwright'
+import { chromium, firefox, webkit, type BrowserType } from 'playwright'
 import { createServer } from 'http'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { promises as fs } from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+export type SupportedBrowser = 'chromium' | 'firefox' | 'webkit'
+
+const browsers: Record<SupportedBrowser, BrowserType> = {
+    chromium,
+    firefox,
+    webkit
+}
 
 export async function readStdin (): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -23,9 +31,10 @@ export async function readStdin (): Promise<string> {
     })
 }
 
-export async function runTestsInBrowser (testCode: string, options: { timeout?: number } = {}): Promise<void> {
+export async function runTestsInBrowser (testCode: string, options: { timeout?: number; browser?: SupportedBrowser } = {}): Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
+    const browserType = options.browser || 'chromium'
 
     // Custom server to serve static files and dynamic test code
     const server = createServer(async (req, res) => {
@@ -57,7 +66,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
     try {
         server.listen(PORT)
 
-        const browser = await chromium.launch()
+        const browser = await browsers[browserType].launch()
         const page = await browser.newPage()
         const browserName = browser.browserType().name()
 

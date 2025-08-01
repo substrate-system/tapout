@@ -22,10 +22,10 @@ interface TestResult {
     stderr: string
 }
 
-async function runCliTest (testFile: string, timeoutMs: number = 3000): Promise<TestResult> {
+async function runCliTest (testFile: string, timeoutMs: number = 3000, browser: string = 'chromium'): Promise<TestResult> {
     return new Promise((resolve) => {
         const testPath = path.join(projectRoot, 'test', testFile)
-        const child = spawn('node', [cliPath, '--timeout', timeoutMs.toString()], {
+        const child = spawn('node', [cliPath, '--timeout', timeoutMs.toString(), '--browser', browser], {
             cwd: projectRoot,
             stdio: ['pipe', 'pipe', 'pipe']
         })
@@ -263,5 +263,33 @@ test('CLI: handles invalid JavaScript', async (t) => {
         result.stderr.includes('Error') ||
         result.stderr.includes('timed out'),
         'should show error message for invalid JavaScript'
+    )
+})
+
+test('CLI: can run tests in Firefox', async (t) => {
+    const result = await runCliTest('simple-test.js', 3000, 'firefox')
+
+    t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Firefox')
+    t.ok(
+        result.stdout.includes('✅ Tests passed in firefox'),
+        'should show success message with Firefox'
+    )
+    t.ok(
+        result.stdout.includes('TAP version 13'),
+        'should show TAP output'
+    )
+})
+
+test('CLI: can run tests in WebKit', async (t) => {
+    const result = await runCliTest('simple-test.js', 3000, 'webkit')
+
+    t.equal(result.exitCode, 0, 'simple test should exit with code 0 in WebKit')
+    t.ok(
+        result.stdout.includes('✅ Tests passed in webkit'),
+        'should show success message with WebKit'
+    )
+    t.ok(
+        result.stdout.includes('TAP version 13'),
+        'should show TAP output'
     )
 })

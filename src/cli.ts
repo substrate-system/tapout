@@ -5,6 +5,7 @@ import { readStdin, runTestsInBrowser } from './index.js'
 function parseArgs () {
     const args = process.argv.slice(2)
     let timeout = 10000 // default 10 seconds
+    let browser: 'chromium' | 'firefox' | 'webkit' = 'chromium' // default browser
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--timeout' || args[i] === '-t') {
@@ -15,15 +16,26 @@ function parseArgs () {
             }
             timeout = timeoutValue
             i++ // skip the next argument since we consumed it
+        } else if (args[i] === '--browser' || args[i] === '-b') {
+            const browserValue = args[i + 1]
+            if (!browserValue || !['chromium', 'firefox', 'webkit'].includes(browserValue)) {
+                console.error('Error: browser must be one of: chromium, firefox, webkit')
+                process.exit(1)
+            }
+            browser = browserValue as 'chromium' | 'firefox' | 'webkit'
+            i++ // skip the next argument since we consumed it
         } else if (args[i] === '--help' || args[i] === '-h') {
             console.log(`Usage: tapout [options]
             
 Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
+  -b, --browser <name>  Browser to use: chromium, firefox, webkit (default: chromium)
   -h, --help           Show this help message
 
-Example:
-  cat test.js | tapout --timeout 5000`)
+Examples:
+  cat test.js | tapout --timeout 5000
+  cat test.js | tapout --browser firefox
+  cat test.js | tapout -b webkit -t 3000`)
             process.exit(0)
         } else {
             console.error(`Unknown option: ${args[i]}`)
@@ -32,12 +44,12 @@ Example:
         }
     }
 
-    return { timeout }
+    return { timeout, browser }
 }
 
 async function main () {
     try {
-        const { timeout } = parseArgs()
+        const { timeout, browser } = parseArgs()
 
         const testCode = await readStdin()
         if (!testCode.trim()) {
@@ -45,7 +57,7 @@ async function main () {
             process.exit(1)
         }
 
-        await runTestsInBrowser(testCode, { timeout })
+        await runTestsInBrowser(testCode, { timeout, browser })
     } catch (error) {
         console.error('Error running tests:', error)
         process.exit(1)
