@@ -1,0 +1,43 @@
+{
+  "type": "module",
+  "private": true,
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "files": [
+    "./dist/*"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": [
+      "./dist/*.js",
+      "./dist/*"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint \"./**/*.{ts,js}\"",
+    "test": "esbuild test/index.ts --platform=node --format=esm --keep-names --bundle | node --input-type=module | tap-spec",
+    "build-esm": "esbuild src/*.ts --format=esm --metafile=dist/meta.json --keep-names --tsconfig=tsconfig.build.json --outdir=./dist --sourcemap && tsc --emitDeclarationOnly --project tsconfig.build.json --outDir dist",
+    "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-esm",
+    "toc": "markdown-toc --maxdepth 3 -i README.md",
+    "preversion": "npm run lint",
+    "version": "npm run toc && auto-changelog -p --template keepachangelog --breaking-pattern 'BREAKING CHANGE:' && git add CHANGELOG.md README.md",
+    "postversion": "git push --follow-tags && npm publish",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@substrate-system/debug": "^0.9.2",
+    "@substrate-system/tapzero": "^0.10.5",
+    "@types/node": "^24.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "auto-changelog": "^2.5.0",
+    "esbuild": "^0.25.5",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "markdown-toc": "^1.2.0",
+    "tap-spec": "^5.0.0",
+    "typescript": "^5.7.2"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)"
+}
