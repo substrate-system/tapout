@@ -6,7 +6,7 @@ import { promises as fs } from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-export type SupportedBrowser = 'chromium' | 'firefox' | 'webkit'
+export type SupportedBrowser = 'chromium'|'firefox'|'webkit'
 
 const browsers: Record<SupportedBrowser, BrowserType> = {
     chromium,
@@ -126,8 +126,4 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
         server.close()
         throw error
     }
-}
-
-export function example (): void {
-    console.log('Example function')
 }
