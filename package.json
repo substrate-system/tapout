@@ -37,7 +37,7 @@
     "version": "npm run toc && npm run changelog && git add CHANGELOG.md README.md",
     "postversion": "git push --follow-tags && npm publish",
     "prepublishOnly": "npm run build",
-    "postinstall": "playwright install"
+    "postinstall": "playwright install --with-deps"
   },
   "dependencies": {
     "@playwright/test": "^1.54.2",
