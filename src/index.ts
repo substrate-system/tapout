@@ -66,7 +66,25 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
     try {
         server.listen(PORT)
 
-        const browser = await browsers[browserType].launch()
+        // Configure browser launch options, especially for CI environments
+        const isCI = process.env.CI === 'true' || process.env.NODE_ENV === 'test'
+        const launchOptions = {
+            headless: true,
+            ...(browserType === 'webkit' && isCI && {
+                // WebKit in CI often needs these flags
+                args: [
+                    '--no-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-web-security',
+                    '--disable-features=VizDisplayCompositor',
+                    '--disable-background-timer-throttling',
+                    '--disable-backgrounding-occluded-windows',
+                    '--disable-renderer-backgrounding'
+                ]
+            })
+        }
+
+        const browser = await browsers[browserType].launch(launchOptions)
         const page = await browser.newPage()
         const browserName = browser.browserType().name()
 
