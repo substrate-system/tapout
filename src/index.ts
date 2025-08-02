@@ -1,5 +1,5 @@
 import { chromium, firefox, webkit, type BrowserType } from 'playwright'
-import { createServer } from 'http'
+import { createServer } from 'node:http'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { promises as fs } from 'fs'
@@ -31,7 +31,10 @@ export async function readStdin (): Promise<string> {
     })
 }
 
-export async function runTestsInBrowser (testCode: string, options: { timeout?: number; browser?: SupportedBrowser } = {}): Promise<void> {
+export async function runTestsInBrowser (
+    testCode:string,
+    options:{ timeout?:number; browser?:SupportedBrowser } = {}
+):Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
     const browserType = options.browser || 'chromium'
@@ -49,7 +52,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
                 res.writeHead(200, { 'Content-Type': 'text/html' })
                 res.end(htmlContent)
             } else if (pathname === '/test-bundle.js') {
-                // Serve the dynamic test code
+                // Serve the test code
                 res.writeHead(200, { 'Content-Type': 'application/javascript' })
                 res.end(testCode)
             } else {
@@ -70,7 +73,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
         const page = await browser.newPage()
         const browserName = browser.browserType().name()
 
-        // Output TAP comment indicating which browser is being used
+        // TAP comment -- which browser is being used
         console.log(`# Running tests in ${browserName}`)
 
         let hasErrors = false
@@ -79,7 +82,7 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
             const text = msg.text()
             console[msg.type()](text)
 
-            // Detect TAP failures, errors, and specific failure patterns
+            // TAP failures, errors, specific failure patterns
             if (text.startsWith('not ok') ||
                 text.includes('Error:') ||
                 text.includes('Failed') ||
@@ -98,10 +101,14 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
             await page.goto(`http://localhost:${PORT}/test-runner.html`)
 
             try {
-                // @ts-expect-error this runs in a browser
-                await page.waitForFunction(() => window.testsFinished === true, null, {
-                    timeout
-                })
+                await page.waitForFunction(
+                    // @ts-expect-error this runs in a browser
+                    () => window.testsFinished === true,
+                    null,
+                    {
+                        timeout
+                    }
+                )
 
                 // @ts-expect-error this runs in a browser
                 const testsFailed = await page.evaluate(() => window.testsFailed)
@@ -112,7 +119,10 @@ export async function runTestsInBrowser (testCode: string, options: { timeout?: 
                     // Tests passed - no additional output needed for TAP format
                 }
             } catch (timeoutError: any) {
-                if (timeoutError.message && timeoutError.message.includes('Timeout')) {
+                if (
+                    timeoutError.message &&
+                    timeoutError.message.includes('Timeout')
+                ) {
                     throw new Error('Tests timed out')
                 } else {
                     throw timeoutError
