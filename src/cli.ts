@@ -27,7 +27,7 @@ function parseArgs () {
                     'chromium, firefox, webkit')
                 process.exit(1)
             }
-            browser = browserValue as 'chromium' | 'firefox' | 'webkit'
+            browser = browserValue as 'chromium'|'firefox'|'webkit'
             i++  // skip the next argument since we consumed it
         } else if (args[i] === '--help' || args[i] === '-h') {
             console.log(`Usage: tapout [options]
