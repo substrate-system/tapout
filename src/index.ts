@@ -6,12 +6,13 @@ import { promises as fs } from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-export type SupportedBrowser = 'chromium'|'firefox'|'webkit'
+export type SupportedBrowser = 'chromium'|'firefox'|'webkit'|'edge'
 
 const browsers: Record<SupportedBrowser, BrowserType> = {
     chromium,
     firefox,
-    webkit
+    webkit,
+    edge: chromium // Edge uses Chromium engine
 }
 
 export async function readStdin (): Promise<string> {
@@ -69,9 +70,13 @@ export async function runTestsInBrowser (
     try {
         server.listen(PORT)
 
-        const browser = await browsers[browserType].launch()
+        const browserOptions = browserType === 'edge'
+            ? { channel: 'msedge' as const }
+            : {}
+
+        const browser = await browsers[browserType === 'edge' ? 'chromium' : browserType].launch(browserOptions)
         const page = await browser.newPage()
-        const browserName = browser.browserType().name()
+        const browserName = browserType === 'edge' ? 'edge' : browser.browserType().name()
 
         // TAP comment -- which browser is being used
         console.log(`# Running tests in ${browserName}`)
@@ -83,11 +88,12 @@ export async function runTestsInBrowser (
             console[msg.type()](text)
 
             // TAP failures, errors, specific failure patterns
+            // But ignore common browser resource loading messages
             if (text.startsWith('not ok') ||
-                text.includes('Error:') ||
-                text.includes('Failed') ||
+                (text.includes('Error:') && !text.includes('Failed to load resource')) ||
+                (text.includes('Failed') && !text.includes('Failed to load resource')) ||
                 text.includes('FAIL') ||
-                msg.type() === 'error') {
+                (msg.type() === 'error' && !text.includes('Failed to load resource'))) {
                 hasErrors = true
             }
         })

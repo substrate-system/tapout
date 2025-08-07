@@ -20,13 +20,14 @@ Usage: tapout [options]
             
 Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
-  -b, --browser <name>  Browser to use: chromium, firefox, webkit (default: chromium)
+  -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -h, --help           Show this help message
 
 Examples:
   cat test.js | tapout --timeout 5000
   cat test.js | tapout --browser firefox
   cat test.js | tapout -b webkit -t 3000
+  cat test.js | tapout --browser edge
 ```
 
 <details><summary><h2>Contents</h2></summary>
@@ -60,7 +61,7 @@ cat ./test/index.js | npx tapout
 
 Pass in the name of a browser to use. Default is Chrome.
 
-Possiblities are `chromium`, `firefox`, or `webkit`.
+Possibilities are `chromium`, `firefox`, `webkit`, or `edge`.
 
 ### `-t`, `--timeout`
 

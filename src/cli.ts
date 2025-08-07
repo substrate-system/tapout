@@ -5,7 +5,7 @@ import { readStdin, runTestsInBrowser } from './index.js'
 function parseArgs () {
     const args = process.argv.slice(2)
     let timeout = 10000  // default 10 seconds
-    let browser:'chromium'|'firefox'|'webkit' = 'chromium'  // default chrome
+    let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'  // default chrome
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--timeout' || args[i] === '-t') {
@@ -21,26 +21,27 @@ function parseArgs () {
             const browserValue = args[i + 1]
             if (
                 !browserValue ||
-                !['chromium', 'firefox', 'webkit'].includes(browserValue)
+                !['chromium', 'firefox', 'webkit', 'edge'].includes(browserValue)
             ) {
                 console.error('Error: browser must be one of: ' +
-                    'chromium, firefox, webkit')
+                    'chromium, firefox, webkit, edge')
                 process.exit(1)
             }
-            browser = browserValue as 'chromium'|'firefox'|'webkit'
+            browser = browserValue as 'chromium'|'firefox'|'webkit'|'edge'
             i++  // skip the next argument since we consumed it
         } else if (args[i] === '--help' || args[i] === '-h') {
             console.log(`Usage: tapout [options]
 
 Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
-  -b, --browser <name>  Browser to use: chromium, firefox, webkit (default: chromium)
+  -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -h, --help           Show this help message
 
 Examples:
   cat test.js | tapout --timeout 5000
   cat test.js | tapout --browser firefox
-  cat test.js | tapout -b webkit -t 3000`)
+  cat test.js | tapout -b webkit -t 3000
+  cat test.js | tapout --browser edge`)
             process.exit(0)
         } else {
             console.error(`Unknown option: ${args[i]}`)

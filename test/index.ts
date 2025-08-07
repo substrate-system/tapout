@@ -279,3 +279,17 @@ test('CLI: can run tests in WebKit', async (t) => {
         'should show TAP output'
     )
 })
+
+test('CLI: can run tests in Edge', async (t) => {
+    const result = await runCliTest('simple-test.js', 3000, 'edge')
+
+    t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Edge')
+    t.ok(
+        result.stdout.includes('# Running tests in edge'),
+        'should show browser comment for Edge'
+    )
+    t.ok(
+        result.stdout.includes('TAP version 13'),
+        'should show TAP output'
+    )
+})
