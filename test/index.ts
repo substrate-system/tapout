@@ -1,9 +1,9 @@
 /**
  * Test the CLI.
  *
- * - Run example test files through the CLI
+ * - Run example test files via CLI
  * - Check exit codes for success/failure scenarios
- * - Validat output messages and error handling
+ * - Validate output messages and error handling
  * - Test edge cases like empty input and invalid JavaScript
  */
 
@@ -20,68 +20,6 @@ interface TestResult {
     exitCode: number | null
     stdout: string
     stderr: string
-}
-
-async function runCliTest (testFile: string, timeoutMs: number = 3000, browser: string = 'chromium'): Promise<TestResult> {
-    return new Promise((resolve) => {
-        const testPath = path.join(projectRoot, 'test', testFile)
-        const child = spawn('node', [cliPath, '--timeout', timeoutMs.toString(), '--browser', browser], {
-            cwd: projectRoot,
-            stdio: ['pipe', 'pipe', 'pipe']
-        })
-
-        let stdout = ''
-        let stderr = ''
-
-        child.stdout.on('data', (data) => {
-            stdout += data.toString()
-        })
-
-        child.stderr.on('data', (data) => {
-            stderr += data.toString()
-        })
-
-        // Read test file and pipe it to CLI
-        fs.readFile(testPath, 'utf8').then((testCode) => {
-            child.stdin.write(testCode)
-            child.stdin.end()
-        }).catch((err) => {
-            stderr += `Error reading test file: ${err.message}`
-            child.kill('SIGTERM')
-            resolve({
-                exitCode: 1,
-                stdout,
-                stderr
-            })
-        })
-
-        child.on('close', (code) => {
-            resolve({
-                exitCode: code,
-                stdout,
-                stderr
-            })
-        })
-
-        child.on('error', (err) => {
-            stderr += `Process error: ${err.message}`
-            resolve({
-                exitCode: 1,
-                stdout,
-                stderr
-            })
-        })
-
-        // Timeout after CLI timeout + 2 seconds for overhead
-        setTimeout(() => {
-            child.kill('SIGTERM')
-            resolve({
-                exitCode: null,
-                stdout,
-                stderr: stderr + `Test timed out after ${timeoutMs + 2000}ms`
-            })
-        }, timeoutMs + 2000)
-    })
 }
 
 test('CLI: simple test should pass', async (t) => {
@@ -293,3 +231,75 @@ test('CLI: can run tests in Edge', async (t) => {
         'should show TAP output'
     )
 })
+
+async function runCliTest (
+    testFile:string,
+    timeoutMs:number = 3000,
+    browser:string = 'chromium'
+):Promise<TestResult> {
+    return new Promise((resolve) => {
+        const testPath = path.join(projectRoot, 'test', testFile)
+        const child = spawn('node', [
+            cliPath,
+            '--timeout',
+            timeoutMs.toString(), '--browser', browser
+        ], {
+            cwd: projectRoot,
+            stdio: ['pipe', 'pipe', 'pipe']
+        })
+
+        let stdout = ''
+        let stderr = ''
+
+        child.stdout.on('data', (data) => {
+            stdout += data.toString()
+        })
+
+        child.stderr.on('data', (data) => {
+            stderr += data.toString()
+        })
+
+        // Read test file then pipe it to CLI
+        fs.readFile(testPath, 'utf8')
+            .then((testCode) => {
+                child.stdin.write(testCode)
+                child.stdin.end()
+            })
+            .catch((err) => {
+                stderr += `Error reading test file: ${err.message}`
+                child.kill('SIGTERM')
+                resolve({
+                    exitCode: 1,
+                    stdout,
+                    stderr
+                })
+            })
+
+        child.on('close', (code) => {
+            resolve({
+                exitCode: code,
+                stdout,
+                stderr
+            })
+        })
+
+        child.on('error', (err) => {
+            stderr += `Process error: ${err.message}`
+            resolve({
+                exitCode: 1,
+                stdout,
+                stderr
+            })
+        })
+
+        // Timeout after CLI timeout + 2 seconds for overhead
+        setTimeout(() => {
+            child.kill('SIGTERM')
+            resolve({
+                exitCode: null,
+                stdout,
+                stderr: stderr + `Test timed out after ${timeoutMs + 2000}ms`
+            })
+        }, timeoutMs + 2000)
+    })
+}
