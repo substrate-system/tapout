@@ -8,8 +8,9 @@
 [![license](https://img.shields.io/badge/license-Big_Time-blue?style=flat-square)](LICENSE)
 
 
-The easiest way to run tests in a browser from the command line. A
-spiritual successor to [tape-run](https://github.com/tape-testing/tape-run).
+The easiest way to run tests in a browser from the command line.
+Just pipe some JS into this command. A spiritual successor
+to [tape-run](https://github.com/tape-testing/tape-run).
 
 This uses [playwright](https://playwright.dev/) under the hood.
 
@@ -51,7 +52,7 @@ npm i -D @substrate-system/tapout
 
 ## Use
 
-Just pipe some Javascript to this command.
+Pipe some Javascript to this command.
 
 ```sh
 cat ./test/index.js | npx tapout
