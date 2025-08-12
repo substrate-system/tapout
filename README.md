@@ -90,7 +90,9 @@ npx esbuild ./test/index.ts | npx tapout
 ```
 
 
-### More Examples
+### Tests
+
+See the [`test/` directory](./test/).
 
 ```bash
 npm run test:simple     # Basic passing test
@@ -99,4 +101,3 @@ npm run test:failing    # Failing test (exits with code 1)
 npm run test:all-examples  # Run passing examples
 ```
 
-See the [`test/` directory](./test/).
