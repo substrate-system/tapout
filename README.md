@@ -11,7 +11,7 @@
 The easiest way to run tests in a browser from the command line. A
 spiritual successor to [tape-run](https://github.com/tape-testing/tape-run).
 
-This uses [playwright](https://playwright.dev/) to create a browser environment.
+This uses [playwright](https://playwright.dev/) under the hood.
 
 ```
 Usage: tapout [options]
@@ -50,6 +50,8 @@ npm i -D @substrate-system/tapout
 ```
 
 ## Use
+
+Just pipe some Javascript to this command.
 
 ```sh
 cat ./test/index.js | npx tapout
