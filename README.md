@@ -8,10 +8,8 @@
 [![license](https://img.shields.io/badge/license-Big_Time-blue?style=flat-square)](LICENSE)
 
 
-Run tests in a browser from the command line. A spiritual successor to
-[tape-run](https://github.com/tape-testing/tape-run).
-
-The easiest way to test in a browser. Just pipe some JS into this command.
+The easiest way to run tests in a browser from the command line. A
+spiritual successor to [tape-run](https://github.com/tape-testing/tape-run).
 
 This uses [playwright](https://playwright.dev/) to create a browser environment.
 
