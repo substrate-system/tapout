@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -16,6 +16,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: create env file
+        run: |
+          touch .env
+          echo "NODE_ENV=\"CI\"" >> .env
       - name: npm install, build
         run: |
           NPM_CONFIG_PRODUCTION=false npm install
@@ -24,6 +28,6 @@ jobs:
           npm run lint
         env:
           CI: true
-      - name: Run tape tests
+      - name: Run tap tests
         run: |
           xvfb-run --server-args="-screen 0 1920x1080x24" npm test

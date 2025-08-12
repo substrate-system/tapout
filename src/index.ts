@@ -70,13 +70,17 @@ export async function runTestsInBrowser (
     try {
         server.listen(PORT)
 
-        const browserOptions = browserType === 'edge'
-            ? { channel: 'msedge' as const }
-            : {}
+        const browserOptions = browserType === 'edge' ?
+            { channel: 'msedge' as const } :
+            {}
 
-        const browser = await browsers[browserType === 'edge' ? 'chromium' : browserType].launch(browserOptions)
+        const browser = await browsers[browserType === 'edge' ?
+            'chromium' :
+            browserType].launch(browserOptions)
         const page = await browser.newPage()
-        const browserName = browserType === 'edge' ? 'edge' : browser.browserType().name()
+        const browserName = browserType === 'edge' ?
+            'edge' :
+            browser.browserType().name()
 
         // TAP comment -- which browser is being used
         console.log(`# Running tests in ${browserName}`)
@@ -89,11 +93,22 @@ export async function runTestsInBrowser (
 
             // TAP failures, errors, specific failure patterns
             // But ignore common browser resource loading messages
-            if (text.startsWith('not ok') ||
-                (text.includes('Error:') && !text.includes('Failed to load resource')) ||
-                (text.includes('Failed') && !text.includes('Failed to load resource')) ||
+            if (
+                text.startsWith('not ok') ||
+                (
+                    text.includes('Error:') &&
+                    !text.includes('Failed to load resource')
+                ) ||
+                (
+                    text.includes('Failed') &&
+                    !text.includes('Failed to load resource')
+                ) ||
                 text.includes('FAIL') ||
-                (msg.type() === 'error' && !text.includes('Failed to load resource'))) {
+                (
+                    msg.type() === 'error' &&
+                    !text.includes('Failed to load resource')
+                )
+            ) {
                 hasErrors = true
             }
         })
@@ -122,7 +137,7 @@ export async function runTestsInBrowser (
                 if (hasErrors || testsFailed) {
                     throw new Error('Tests failed')
                 } else {
-                    // Tests passed - no additional output needed for TAP format
+                    // Tests passed - no additional output needed for TAP
                 }
             } catch (timeoutError: any) {
                 if (
