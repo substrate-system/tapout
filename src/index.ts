@@ -35,7 +35,7 @@ function parseTestLine (line: string) {
     return test
 }
 
-async function generateHTMLReport (
+function generateHTMLContent (
     testResults: Array<{
         name: string;
         status: 'passed' | 'failed' | 'skipped';
@@ -43,16 +43,14 @@ async function generateHTMLReport (
         error?: string;
     }>,
     browserName: string,
-    duration: number,
-    outdir?: string,
-    outfile?: string
-) {
+    duration: number
+): string {
     const passed = testResults.filter(t => t.status === 'passed').length
     const failed = testResults.filter(t => t.status === 'failed').length
     const total = testResults.length
     const passRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0'
 
-    const html = `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -181,8 +179,29 @@ async function generateHTMLReport (
     </div>
 </body>
 </html>`
+}
 
-    const filename = outfile || 'test-results.html'
+async function generateHTMLReport (
+    testResults: Array<{
+        name: string;
+        status: 'passed' | 'failed' | 'skipped';
+        duration?: number;
+        error?: string;
+    }>,
+    browserName: string,
+    duration: number,
+    outdir?: string,
+    outfile?: string
+): Promise<string | null> {
+    const html = generateHTMLContent(testResults, browserName, duration)
+
+    const filename = outfile || 'index.html'
+
+    // If no outfile specified and no outdir specified, output to stdout
+    if (!outfile && !outdir) {
+        return null // Signal to output to stdout
+    }
+
     const outputPath = outdir ? path.join(outdir, filename) : filename
 
     // Create output directory if it doesn't exist
@@ -364,7 +383,14 @@ export async function runTestsInBrowser (
             if (reporter === 'html') {
                 const duration = Date.now() - testStartTime
                 const htmlPath = await generateHTMLReport(testResults, browserName, duration, options.outdir, options.outfile)
-                console.log(`HTML report generated: ${htmlPath}`)
+
+                if (htmlPath === null) {
+                    // Output HTML to stdout
+                    const html = generateHTMLContent(testResults, browserName, duration)
+                    console.log(html)
+                } else {
+                    console.log(`HTML report generated: ${htmlPath}`)
+                }
             }
         }
     } catch (error) {

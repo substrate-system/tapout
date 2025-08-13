@@ -10,7 +10,7 @@ Options:
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
   --outdir <path>       Output directory for HTML reports (default: current directory)
-  --outfile <name>      Output filename for HTML reports (default: test-results.html)
+  --outfile <name>      Output filename for HTML reports (default: index.html)
   -h, --help           Show this help message
 
 Examples:

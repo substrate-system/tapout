@@ -22,7 +22,7 @@ Options:
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
   --outdir <path>       Output directory for HTML reports (default: current directory)
-  --outfile <name>      Output filename for HTML reports (default: test-results.html)
+  --outfile <name>      Output filename for HTML reports (default: index.html)
   -h, --help           Show this help message
 
 Examples:
@@ -65,13 +65,31 @@ Pipe some Javascript to this command.
 cat ./test/index.js | npx tapout
 ```
 
+Use shell redirection
+
+```sh
+cat ./test/index.js | npx tapout | npx tap-spec
+```
+
 ### Generate HTML reports
+
+By default writes to `stdout`.
 
 ```sh
 # Create a visual test report
-cat ./test/index.js | npx tapout --reporter html
-open test-results.html  # View the generated report
+cat ./test/index.js | npx tapout --reporter html > index.html
+open index.html  # View the generated report
 ```
+
+#### HTML Summary
+
+* `--reporter html` with no other options -> output HTML to stdout
+* `--reporter html --outfile filename.html` -> save to `filename.html` in
+  current directory
+* `--reporter html --outdir ./reports` -> save to `./reports/index.html`
+* `--reporter html --outdir ./reports --outfile custom.html` -> save to
+  `./reports/custom.html`
+
 
 ### `-b`, `--browser`
 
@@ -92,15 +110,18 @@ cat test.js | npx tapout --timeout 5000
 Choose the output format. Default is TAP.
 
 **Available reporters:**
-- `tap` - Standard TAP output (default)
-- `html` - Generates a beautiful HTML report file
+- `tap` - TAP output (default)
+- `html` - Generate an HTML report file
 
 ```sh
 # Generate HTML report
 cat test.js | npx tapout --reporter html
 
+# Generate HTML and output to stdout
+cat test.js | npx tapout --reporter html > my-report.html
+
 # Use TAP output (default)
-cat test.js | npx tapout --reporter tap
+cat test.js | npx tapout
 
 # Customize output location
 cat test.js | npx tapout --reporter html --outdir ./reports
@@ -108,7 +129,7 @@ cat test.js | npx tapout --reporter html --outfile my-test-results.html
 cat test.js | npx tapout --reporter html --outdir ./reports --outfile custom-report.html
 ```
 
-The HTML reporter generates a `test-results.html` file with:
+The HTML reporter generates an `index.html` file by default with:
 - Beautiful, responsive design
 - Test summary with pass/fail counts and percentages
 - Individual test results with status indicators
@@ -117,14 +138,15 @@ The HTML reporter generates a `test-results.html` file with:
 
 **Output Control:**
 - `--outdir <path>` - Specify where to save the HTML report (default: current directory)
-- `--outfile <name>` - Specify the filename for the HTML report (default: test-results.html)
+- `--outfile <name>` - Specify the filename for the HTML report (default: index.html)
+- If neither `--outdir` nor `--outfile` is specified, HTML output is sent to stdout
 
 **GitHub Pages Integration:**
 The generated HTML file is self-contained and can be easily hosted on GitHub Pages or any static hosting service. Simply commit the HTML file to your repository.
 
 ```sh
 # Example CI workflow
-npm test 2>&1 | npx tapout --reporter html
+npm test 2>&1 | npx tapout --reporter html --outfile test-results.html
 git add test-results.html
 git commit -m "Update test results"
 git push
@@ -165,4 +187,3 @@ npm run test:all-examples  # Run passing examples
 npm run test:simple -- --reporter html     # Generate HTML report
 npm run test:complex -- --reporter html    # Complex test HTML report
 ```
-
