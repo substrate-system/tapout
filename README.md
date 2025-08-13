@@ -20,6 +20,7 @@ Usage: tapout [options]
 Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
+  -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
   -h, --help           Show this help message
 
 Examples:
@@ -27,6 +28,7 @@ Examples:
   cat test.js | tapout --browser firefox
   cat test.js | tapout -b webkit -t 3000
   cat test.js | tapout --browser edge
+  cat test.js | tapout --reporter html
 ```
 
 <details><summary><h2>Contents</h2></summary>
@@ -37,6 +39,7 @@ Examples:
 - [Use](#use)
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
+  * [`-r`, `--reporter`](#-r---reporter)
 - [Example Tests](#example-tests)
   * [More Examples](#more-examples)
 
@@ -58,6 +61,14 @@ Pipe some Javascript to this command.
 cat ./test/index.js | npx tapout
 ```
 
+### Generate HTML reports
+
+```sh
+# Create a visual test report
+cat ./test/index.js | npx tapout --reporter html
+open test-results.html  # View the generated report
+```
+
 ### `-b`, `--browser`
 
 Pass in the name of a browser to use. Default is Chrome.
@@ -70,6 +81,40 @@ Pass in a different timeout value. The default is 10 seconds.
 
 ```sh
 cat test.js | npx tapout --timeout 5000
+```
+
+### `-r`, `--reporter`
+
+Choose the output format. Default is TAP.
+
+**Available reporters:**
+- `tap` - Standard TAP output (default)
+- `html` - Generates a beautiful HTML report file
+
+```sh
+# Generate HTML report
+cat test.js | npx tapout --reporter html
+
+# Use TAP output (default)
+cat test.js | npx tapout --reporter tap
+```
+
+The HTML reporter generates a `test-results.html` file with:
+- Beautiful, responsive design
+- Test summary with pass/fail counts and percentages
+- Individual test results with status indicators
+- Browser and timing information
+- Perfect for CI/CD or sharing results
+
+**GitHub Pages Integration:**
+The generated HTML file is self-contained and can be easily hosted on GitHub Pages or any static hosting service. Simply commit the `test-results.html` file to your repository.
+
+```sh
+# Example CI workflow
+npm test 2>&1 | npx tapout --reporter html
+git add test-results.html
+git commit -m "Update test results"
+git push
 ```
 
 
@@ -102,5 +147,9 @@ npm run test:simple     # Basic passing test
 npm run test:complex    # Complex async test  
 npm run test:failing    # Failing test (exits with code 1)
 npm run test:all-examples  # Run passing examples
+
+# HTML reporter examples
+npm run test:simple -- --reporter html     # Generate HTML report
+npm run test:complex -- --reporter html    # Complex test HTML report
 ```
 
