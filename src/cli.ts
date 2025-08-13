@@ -2,11 +2,35 @@
 
 import { readStdin, runTestsInBrowser } from './index.js'
 
+function showHelp () {
+    console.log(`Usage: tapout [options]
+
+Options:
+  -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
+  -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
+  -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
+  --outdir <path>       Output directory for HTML reports (default: current directory)
+  --outfile <name>      Output filename for HTML reports (default: test-results.html)
+  -h, --help           Show this help message
+
+Examples:
+  cat test.js | tapout --timeout 5000
+  cat test.js | tapout --browser firefox
+  cat test.js | tapout -b webkit -t 3000
+  cat test.js | tapout --browser edge
+  cat test.js | tapout --reporter json
+  cat test.js | tapout --reporter html
+  cat test.js | tapout --reporter html --outdir ./reports
+  cat test.js | tapout --reporter html --outfile my-test-results.html`)
+}
+
 function parseArgs () {
     const args = process.argv.slice(2)
     let timeout = 10000  // default 10 seconds
     let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'  // default chrome
     let reporter: 'tap' | 'json' | 'junit' | 'list' | 'html' = 'tap'  // default TAP output
+    let outdir: string | undefined
+    let outfile: string | undefined
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--timeout' || args[i] === '-t') {
@@ -42,22 +66,24 @@ function parseArgs () {
             }
             reporter = reporterValue as 'tap' | 'json' | 'junit' | 'list' | 'html'
             i++  // skip the next argument since we consumed it
+        } else if (args[i] === '--outdir') {
+            const outdirValue = args[i + 1]
+            if (!outdirValue) {
+                console.error('Error: --outdir requires a directory path')
+                process.exit(1)
+            }
+            outdir = outdirValue
+            i++  // skip the next argument since we consumed it
+        } else if (args[i] === '--outfile') {
+            const outfileValue = args[i + 1]
+            if (!outfileValue) {
+                console.error('Error: --outfile requires a filename')
+                process.exit(1)
+            }
+            outfile = outfileValue
+            i++  // skip the next argument since we consumed it
         } else if (args[i] === '--help' || args[i] === '-h') {
-            console.log(`Usage: tapout [options]
-
-Options:
-  -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
-  -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
-  -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
-  -h, --help           Show this help message
-
-Examples:
-  cat test.js | tapout --timeout 5000
-  cat test.js | tapout --browser firefox
-  cat test.js | tapout -b webkit -t 3000
-  cat test.js | tapout --browser edge
-  cat test.js | tapout --reporter json
-  cat test.js | tapout --reporter html`)
+            showHelp()
             process.exit(0)
         } else {
             console.error(`Unknown option: ${args[i]}`)
@@ -66,20 +92,27 @@ Examples:
         }
     }
 
-    return { timeout, browser, reporter }
+    return { timeout, browser, reporter, outdir, outfile, hasArgs: args.length > 0 }
 }
 
 async function main () {
     try {
-        const { timeout, browser, reporter } = parseArgs()
+        const { timeout, browser, reporter, outdir, outfile, hasArgs } = parseArgs()
+
+        // If no arguments and stdin is a TTY (interactive terminal), show help
+        if (!hasArgs && process.stdin.isTTY) {
+            showHelp()
+            process.exit(0)
+        }
 
         const testCode = await readStdin()
+
         if (!testCode.trim()) {
             console.error('No test code provided via stdin')
             process.exit(1)
         }
 
-        await runTestsInBrowser(testCode, { timeout, browser, reporter })
+        await runTestsInBrowser(testCode, { timeout, browser, reporter, outdir, outfile })
     } catch (error) {
         console.error('Error running tests:', error)
         process.exit(1)

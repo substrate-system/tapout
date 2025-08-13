@@ -25,10 +25,10 @@ function parseTestLine (line: string) {
 
     // Determine if test passed or failed
     test.status = line.startsWith('ok ') ? 'passed' : 'failed'
-    
+
     // Remove "ok " or "not ok " prefix and test number
     const remaining = line.replace(/^(not )?ok \d+\s*-?\s*/, '')
-    
+
     // Extract description
     test.name = remaining.trim()
 
@@ -43,7 +43,9 @@ async function generateHTMLReport (
         error?: string;
     }>,
     browserName: string,
-    duration: number
+    duration: number,
+    outdir?: string,
+    outfile?: string
 ) {
     const passed = testResults.filter(t => t.status === 'passed').length
     const failed = testResults.filter(t => t.status === 'failed').length
@@ -180,7 +182,14 @@ async function generateHTMLReport (
 </body>
 </html>`
 
-    const outputPath = 'test-results.html'
+    const filename = outfile || 'test-results.html'
+    const outputPath = outdir ? path.join(outdir, filename) : filename
+
+    // Create output directory if it doesn't exist
+    if (outdir) {
+        await fs.mkdir(outdir, { recursive: true })
+    }
+
     await fs.writeFile(outputPath, html, 'utf8')
     return outputPath
 }
@@ -208,6 +217,8 @@ export async function runTestsInBrowser (
         timeout?:number;
         browser?:SupportedBrowser;
         reporter?: 'tap' | 'json' | 'junit' | 'list' | 'html';
+        outdir?: string;
+        outfile?: string;
     } = {}
 ):Promise<void> {
     const PORT = 8123
@@ -273,7 +284,7 @@ export async function runTestsInBrowser (
 
         page.on('console', msg => {
             const text = msg.text()
-            
+
             // For TAP reporter, output directly to console
             if (reporter === 'tap') {
                 console[msg.type()](text)
@@ -348,11 +359,11 @@ export async function runTestsInBrowser (
         } finally {
             await browser.close()
             server.close()
-            
+
             // Generate HTML report if requested
             if (reporter === 'html') {
                 const duration = Date.now() - testStartTime
-                const htmlPath = await generateHTMLReport(testResults, browserName, duration)
+                const htmlPath = await generateHTMLReport(testResults, browserName, duration, options.outdir, options.outfile)
                 console.log(`HTML report generated: ${htmlPath}`)
             }
         }

@@ -21,6 +21,8 @@ Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
+  --outdir <path>       Output directory for HTML reports (default: current directory)
+  --outfile <name>      Output filename for HTML reports (default: test-results.html)
   -h, --help           Show this help message
 
 Examples:
@@ -29,6 +31,8 @@ Examples:
   cat test.js | tapout -b webkit -t 3000
   cat test.js | tapout --browser edge
   cat test.js | tapout --reporter html
+  cat test.js | tapout --reporter html --outdir ./reports
+  cat test.js | tapout --reporter html --outfile my-test-results.html
 ```
 
 <details><summary><h2>Contents</h2></summary>
@@ -97,6 +101,11 @@ cat test.js | npx tapout --reporter html
 
 # Use TAP output (default)
 cat test.js | npx tapout --reporter tap
+
+# Customize output location
+cat test.js | npx tapout --reporter html --outdir ./reports
+cat test.js | npx tapout --reporter html --outfile my-test-results.html
+cat test.js | npx tapout --reporter html --outdir ./reports --outfile custom-report.html
 ```
 
 The HTML reporter generates a `test-results.html` file with:
@@ -106,8 +115,12 @@ The HTML reporter generates a `test-results.html` file with:
 - Browser and timing information
 - Perfect for CI/CD or sharing results
 
+**Output Control:**
+- `--outdir <path>` - Specify where to save the HTML report (default: current directory)
+- `--outfile <name>` - Specify the filename for the HTML report (default: test-results.html)
+
 **GitHub Pages Integration:**
-The generated HTML file is self-contained and can be easily hosted on GitHub Pages or any static hosting service. Simply commit the `test-results.html` file to your repository.
+The generated HTML file is self-contained and can be easily hosted on GitHub Pages or any static hosting service. Simply commit the HTML file to your repository.
 
 ```sh
 # Example CI workflow
