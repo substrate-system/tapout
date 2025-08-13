@@ -76,7 +76,6 @@ cat ./test/index.js | npx tapout | npx tap-spec
 By default writes to `stdout`.
 
 ```sh
-# Create a visual test report
 cat ./test/index.js | npx tapout --reporter html > index.html
 open index.html  # View the generated report
 ```
@@ -137,12 +136,17 @@ The HTML reporter generates an `index.html` file by default with:
 - Perfect for CI/CD or sharing results
 
 **Output Control:**
-- `--outdir <path>` - Specify where to save the HTML report (default: current directory)
-- `--outfile <name>` - Specify the filename for the HTML report (default: index.html)
-- If neither `--outdir` nor `--outfile` is specified, HTML output is sent to stdout
+- `--outdir <path>` - Specify where to save the HTML report
+  (default: current directory)
+- `--outfile <name>` - Specify the filename for the HTML report
+  (default: index.html)
+- If neither `--outdir` nor `--outfile` is specified, HTML output is sent
+  to stdout
 
 **GitHub Pages Integration:**
-The generated HTML file is self-contained and can be easily hosted on GitHub Pages or any static hosting service. Simply commit the HTML file to your repository.
+The generated HTML file is self-contained and can be easily hosted on GitHub
+Pages or any static hosting service. Simply commit the HTML file to
+your repository.
 
 ```sh
 # Example CI workflow
