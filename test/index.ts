@@ -17,9 +17,9 @@ const projectRoot = process.cwd()
 const cliPath = path.join(projectRoot, 'dist', 'cli.js')
 
 interface TestResult {
-    exitCode: number | null
-    stdout: string
-    stderr: string
+    exitCode:number | null
+    stdout:string
+    stderr:string
 }
 
 test('CLI: simple test should pass', async (t) => {
@@ -67,13 +67,15 @@ test('CLI: failing test should fail', async (t) => {
         'should show failing test'
     )
     t.ok(
-        result.stdout.includes('Error executing test code') || result.stderr.includes('Error'),
+        (result.stdout.includes('Error executing test code') ||
+        result.stderr.includes('Error')),
         'should show error'
     )
 })
 
 test('CLI: timeout test should handle timeouts', async (t) => {
-    const result = await runCliTest('timeout-test.js', 2000) // Use 2 second timeout for this test
+    // Use 2 second timeout for this test
+    const result = await runCliTest('timeout-test.js', 2000)
 
     // This test might either timeout (exit code null) or auto-finish (exit code 0)
     // depending on the timing, both are acceptable behaviors
@@ -237,7 +239,9 @@ test('CLI: timeout parameter is passed to test runner', async (t) => {
 
     t.equal(result.exitCode, 0, 'timeout validation test should exit with code 0')
     t.ok(
-        result.stdout.includes('ok 1 - timeout parameter is properly passed to test runner'),
+        result.stdout.includes(
+            'ok 1 - timeout parameter is properly passed to test runner'
+        ),
         'should confirm timeout parameter is passed to HTML runner'
     )
 })

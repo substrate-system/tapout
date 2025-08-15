@@ -9,7 +9,8 @@
       // Get timeout from URL parameters, default to 10000ms
       const urlParams = new URLSearchParams(window.location.search)
       const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
-      // Auto-finish delay: use 1 second for most cases, but for very short timeouts, use half the timeout
+      // Auto-finish delay: use 1 second for most cases, but for very short
+      // timeouts, use half the timeout
       const autoFinishDelay = timeoutMs < 2000 ? timeoutMs / 2 : 1000
       
       // Set up test completion detection
@@ -45,7 +46,10 @@
         if (!hasFinished) {
           if (finishTimer) clearTimeout(finishTimer)
           finishTimer = setTimeout(() => {
-            if (!hasFinished && !window.testsFinished && (Date.now() - lastLogTime) > 500) {
+            if (
+              !hasFinished && !window.testsFinished &&
+              (Date.now() - lastLogTime) > 500
+            ) {
               console.log('Tests auto-finished (no explicit completion detected)')
               markTestsFinished()
             }

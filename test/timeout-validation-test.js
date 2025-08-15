@@ -1,5 +1,7 @@
-// Test to validate that timeout parameter is properly passed to test-runner.html
-// This test checks that the autoFinishDelay is calculated correctly based on the timeout
+// Test to validate that timeout parameter is properly
+// passed to test-runner.html
+// This test checks that the autoFinishDelay is calculated correctly based
+// on the timeout
 console.log('TAP version 13')
 console.log('1..1')
 
