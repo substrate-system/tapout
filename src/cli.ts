@@ -8,7 +8,7 @@ function showHelp () {
 Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
-  -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
+  -r, --reporter <name> Output format: tap, html (default: tap)
   --outdir <path>       Output directory for HTML reports (default: current directory)
   --outfile <name>      Output filename for HTML reports (default: index.html)
   -h, --help           Show this help message
@@ -18,7 +18,6 @@ Examples:
   cat test.js | tapout --browser firefox
   cat test.js | tapout -b webkit -t 3000
   cat test.js | tapout --browser edge
-  cat test.js | tapout --reporter json
   cat test.js | tapout --reporter html
   cat test.js | tapout --reporter html --outdir ./reports
   cat test.js | tapout --reporter html --outfile my-test-results.html`)
@@ -28,7 +27,7 @@ function parseArgs () {
     const args = process.argv.slice(2)
     let timeout = 10000  // default 10 seconds
     let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'  // default chrome
-    let reporter: 'tap' | 'json' | 'junit' | 'list' | 'html' = 'tap'  // default TAP output
+    let reporter: 'tap' | 'html' = 'tap'  // default TAP output
     let outdir: string | undefined
     let outfile: string | undefined
     let customTimeout = false  // track if timeout was explicitly set
@@ -60,13 +59,13 @@ function parseArgs () {
             const reporterValue = args[i + 1]
             if (
                 !reporterValue ||
-                !['tap', 'json', 'junit', 'list', 'html'].includes(reporterValue)
+                !['tap', 'html'].includes(reporterValue)
             ) {
                 console.error('Error: reporter must be one of: ' +
-                    'tap, json, junit, list, html')
+                    'tap, html')
                 process.exit(1)
             }
-            reporter = reporterValue as 'tap' | 'json' | 'junit' | 'list' | 'html'
+            reporter = reporterValue as 'tap' | 'html'
             i++  // skip the next argument since we consumed it
         } else if (args[i] === '--outdir') {
             const outdirValue = args[i + 1]

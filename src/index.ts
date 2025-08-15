@@ -235,7 +235,7 @@ export async function runTestsInBrowser (
     options:{
         timeout?:number;
         browser?:SupportedBrowser;
-        reporter?: 'tap' | 'json' | 'junit' | 'list' | 'html';
+        reporter?: 'tap' | 'html';
         outdir?: string;
         outfile?: string;
     } = {}

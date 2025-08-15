@@ -20,7 +20,7 @@ Usage: tapout [options]
 Options:
   -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
-  -r, --reporter <name> Output format: tap, json, junit, list, html (default: tap)
+  -r, --reporter <name> Output format: tap, html (default: tap)
   --outdir <path>       Output directory for HTML reports (default: current directory)
   --outfile <name>      Output filename for HTML reports (default: index.html)
   -h, --help           Show this help message
@@ -39,17 +39,32 @@ Examples:
 
 <!-- toc -->
 
+- [Features](#features)
 - [Install](#install)
 - [Use](#use)
+  * [Generate HTML reports](#generate-html-reports)
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
   * [`-r`, `--reporter`](#-r---reporter)
+- [Error Handling & Detection](#error-handling--detection)
+  * [Automatic Error Detection](#automatic-error-detection)
+  * [Example Error Scenarios](#example-error-scenarios)
 - [Example Tests](#example-tests)
   * [Tests](#tests)
 
 <!-- tocstop -->
 
 </details>
+
+## Features
+
+- **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit), or Edge
+- **Smart timeout handling**: Respects custom timeouts with intelligent auto-finish behavior
+- **Comprehensive error detection**: Automatically catches unhandled promise rejections, uncaught exceptions, and console errors
+- **Beautiful HTML reports**: Generate responsive HTML reports perfect for CI/CD or sharing
+- **TAP compatible**: Standard TAP output works with any TAP formatter
+- **Zero configuration**: Just pipe your JavaScript and go
+- **CI/CD friendly**: Proper exit codes and error detection for automated testing
 
 ## Install
 
@@ -100,17 +115,29 @@ Possibilities are `chromium`, `firefox`, `webkit`, or `edge`.
 
 Pass in a different timeout value. The default is 10 seconds.
 
+The timeout respects the auto-finish behavior:
+- With **default timeout** (no `-t` flag): Auto-finish triggers after a short delay (1-2 seconds) when no test activity is detected
+- With **custom timeout** (using `-t`): Auto-finish uses 80% of the specified timeout, giving tests more time to complete naturally
+
 ```sh
 cat test.js | npx tapout --timeout 5000
 ```
+
+**Error Detection**: tapout automatically detects and reports test failures from:
+- Unhandled promise rejections
+- Uncaught exceptions  
+- Console error messages with common error patterns
+- TAP "not ok" results
+
+Tests will exit with code 1 if any errors are detected, making it perfect for CI/CD pipelines.
 
 ### `-r`, `--reporter`
 
 Choose the output format. Default is TAP.
 
 **Available reporters:**
-- `tap` - TAP output (default)
-- `html` - Generate an HTML report file
+- `tap` - TAP output (default) - Standard Test Anything Protocol format
+- `html` - Generate an HTML report file with beautiful, responsive design
 
 ```sh
 # Generate HTML report
@@ -157,6 +184,42 @@ git push
 ```
 
 
+git push
+```
+
+## Error Handling & Detection
+
+tapout provides comprehensive error detection to catch issues that might otherwise go unnoticed:
+
+### Automatic Error Detection
+- **Unhandled Promise Rejections**: Catches async errors that don't have `.catch()` handlers
+- **Uncaught Exceptions**: Detects thrown errors that aren't caught by try/catch blocks  
+- **Console Error Patterns**: Monitors console.error() calls for common error indicators
+- **TAP Failures**: Standard "not ok" results from TAP output
+
+### Example Error Scenarios
+
+```js
+// These will all be detected and cause test failure:
+
+// Unhandled promise rejection
+Promise.reject(new Error('Async error'))
+
+// Uncaught exception  
+setTimeout(() => {
+    throw new Error('Uncaught error')
+}, 100)
+
+// Console error logging
+console.error('Error: Something went wrong')
+
+// TAP failure
+console.log('not ok 1 - test failed')
+```
+
+All detected errors cause tapout to exit with code 1, making it perfect for CI/CD pipelines.
+
+
 ## Example Tests
 
 Write tests for the browser environment:
@@ -185,9 +248,10 @@ See the [`test/` directory](./test/).
 npm run test:simple     # Basic passing test
 npm run test:complex    # Complex async test  
 npm run test:failing    # Failing test (exits with code 1)
+npm run test:timeout    # Test timeout behavior
 npm run test:all-examples  # Run passing examples
 
-# HTML reporter examples
+# HTML reporter examples  
 npm run test:simple -- --reporter html     # Generate HTML report
 npm run test:complex -- --reporter html    # Complex test HTML report
 ```
