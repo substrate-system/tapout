@@ -157,11 +157,10 @@ cat test.js | npx tapout --reporter html --outdir ./reports --outfile custom-rep
 ```
 
 The HTML reporter generates an `index.html` file by default with:
-- Beautiful, responsive design
+
 - Test summary with pass/fail counts and percentages
 - Individual test results with status indicators
 - Browser and timing information
-- Perfect for CI/CD or sharing results
 
 **Output Control:**
 - `--outdir <path>` - Specify where to save the HTML report
