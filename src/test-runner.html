@@ -9,9 +9,19 @@
       // Get timeout from URL parameters, default to 10000ms
       const urlParams = new URLSearchParams(window.location.search)
       const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
-      // Auto-finish delay: use 1 second for most cases, but for very short
-      // timeouts, use half the timeout
-      const autoFinishDelay = timeoutMs < 2000 ? timeoutMs / 2 : 1000
+      const isCustomTimeout = urlParams.get('custom') === 'true'
+      
+      // When a custom timeout is provided, use a much longer auto-finish delay
+      // to give tests time to complete naturally, but still have a fallback
+      let autoFinishDelay
+      if (isCustomTimeout) {
+        // For custom timeouts, use 80% of the timeout as auto-finish delay
+        // This gives tests most of the time but still provides a fallback
+        autoFinishDelay = Math.floor(timeoutMs * 0.8)
+      } else {
+        // Use a reasonable auto-finish delay for default timeout
+        autoFinishDelay = Math.max(500, Math.min(5000, timeoutMs * 0.2))
+      }
       
       // Set up test completion detection
       let hasFinished = false

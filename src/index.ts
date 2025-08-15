@@ -34,10 +34,11 @@ export async function readStdin (): Promise<string> {
 
 export async function runTestsInBrowser (
     testCode:string,
-    options:{ timeout?:number; browser?:SupportedBrowser } = {}
+    options:{ timeout?:number; customTimeout?:boolean; browser?:SupportedBrowser } = {}
 ):Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
+    const customTimeout = options.customTimeout || false
     const browserType = options.browser || 'chromium'
 
     // Custom server to serve static files and dynamic test code
@@ -111,7 +112,7 @@ export async function runTestsInBrowser (
         })
 
         try {
-            await page.goto(`http://localhost:${PORT}/test-runner.html?timeout=${timeout}`)
+            await page.goto(`http://localhost:${PORT}/test-runner.html?timeout=${timeout}&custom=${customTimeout}`)
 
             try {
                 await page.waitForFunction(

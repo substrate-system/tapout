@@ -234,6 +234,67 @@ test('CLI: can run tests in Edge', async (t) => {
     )
 })
 
+test('CLI: respects custom timeout for long-running tests', async (t) => {
+    // Test that takes 2 seconds but should complete within 10 second timeout
+    const longRunningTest = `
+console.log('TAP version 13')
+console.log('1..1')
+setTimeout(() => {
+    console.log('ok 1 - long running test')
+    window.testsFinished = true
+}, 2000)`
+
+    const result = await new Promise<TestResult>((resolve) => {
+        const child = spawn('node', [cliPath, '--timeout', '10000'], {
+            cwd: projectRoot,
+            stdio: ['pipe', 'pipe', 'pipe']
+        })
+
+        let stdout = ''
+        let stderr = ''
+
+        child.stdout.on('data', (data) => {
+            stdout += data.toString()
+        })
+
+        child.stderr.on('data', (data) => {
+            stderr += data.toString()
+        })
+
+        child.stdin.write(longRunningTest)
+        child.stdin.end()
+
+        child.on('close', (code) => {
+            resolve({
+                exitCode: code,
+                stdout,
+                stderr
+            })
+        })
+
+        // Timeout after 15 seconds
+        setTimeout(() => {
+            child.kill('SIGTERM')
+            resolve({
+                exitCode: null,
+                stdout,
+                stderr: stderr + 'Test timed out'
+            })
+        }, 15000)
+    })
+
+    t.equal(result.exitCode, 0, 'long running test should complete successfully')
+    t.ok(
+        result.stdout.includes('ok 1 - long running test'),
+        'should show test completion'
+    )
+    t.equal(
+        result.stdout.includes('Tests auto-finished'),
+        false,
+        'should not auto-finish when test completes explicitly'
+    )
+})
+
 test('CLI: timeout parameter is passed to test runner', async (t) => {
     const result = await runCliTest('timeout-validation-test.js', 5000)
 

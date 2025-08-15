@@ -5,6 +5,7 @@ import { readStdin, runTestsInBrowser } from './index.js'
 function parseArgs () {
     const args = process.argv.slice(2)
     let timeout = 10000  // default 10 seconds
+    let customTimeout = false  // track if timeout was explicitly set
     let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'  // default chrome
 
     for (let i = 0; i < args.length; i++) {
@@ -16,6 +17,7 @@ function parseArgs () {
                 process.exit(1)
             }
             timeout = timeoutValue
+            customTimeout = true
             i++  // skip the next argument since we consumed it
         } else if (args[i] === '--browser' || args[i] === '-b') {
             const browserValue = args[i + 1]
@@ -50,12 +52,12 @@ Examples:
         }
     }
 
-    return { timeout, browser }
+    return { timeout, customTimeout, browser }
 }
 
 async function main () {
     try {
-        const { timeout, browser } = parseArgs()
+        const { timeout, customTimeout, browser } = parseArgs()
 
         const testCode = await readStdin()
         if (!testCode.trim()) {
@@ -63,7 +65,7 @@ async function main () {
             process.exit(1)
         }
 
-        await runTestsInBrowser(testCode, { timeout, browser })
+        await runTestsInBrowser(testCode, { timeout, customTimeout, browser })
     } catch (error) {
         console.error('Error running tests:', error)
         process.exit(1)
