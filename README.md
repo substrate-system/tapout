@@ -59,12 +59,16 @@ Examples:
 ## Features
 
 - **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit), or Edge
-- **Smart timeout handling**: Respects custom timeouts with intelligent auto-finish behavior
-- **Comprehensive error detection**: Automatically catches unhandled promise rejections, uncaught exceptions, and console errors
-- **Beautiful HTML reports**: Generate responsive HTML reports perfect for CI/CD or sharing
+- **Smart timeout handling**: Respects custom timeouts with intelligent
+  auto-finish behavior
+- **Comprehensive error detection**: Automatically catches unhandled promise
+  rejections, uncaught exceptions, and console errors
+- **Beautiful HTML reports**: Generate responsive HTML reports perfect for
+  CI/CD or sharing
 - **TAP compatible**: Standard TAP output works with any TAP formatter
 - **Zero configuration**: Just pipe your JavaScript and go
-- **CI/CD friendly**: Proper exit codes and error detection for automated testing
+- **CI/CD friendly**: Proper exit codes and error detection for
+  automated testing
 
 ## Install
 
@@ -183,43 +187,6 @@ git commit -m "Update test results"
 git push
 ```
 
-
-git push
-```
-
-## Error Handling & Detection
-
-tapout provides comprehensive error detection to catch issues that might otherwise go unnoticed:
-
-### Automatic Error Detection
-- **Unhandled Promise Rejections**: Catches async errors that don't have `.catch()` handlers
-- **Uncaught Exceptions**: Detects thrown errors that aren't caught by try/catch blocks  
-- **Console Error Patterns**: Monitors console.error() calls for common error indicators
-- **TAP Failures**: Standard "not ok" results from TAP output
-
-### Example Error Scenarios
-
-```js
-// These will all be detected and cause test failure:
-
-// Unhandled promise rejection
-Promise.reject(new Error('Async error'))
-
-// Uncaught exception  
-setTimeout(() => {
-    throw new Error('Uncaught error')
-}, 100)
-
-// Console error logging
-console.error('Error: Something went wrong')
-
-// TAP failure
-console.log('not ok 1 - test failed')
-```
-
-All detected errors cause tapout to exit with code 1, making it perfect for CI/CD pipelines.
-
-
 ## Example Tests
 
 Write tests for the browser environment:
@@ -254,4 +221,10 @@ npm run test:all-examples  # Run passing examples
 # HTML reporter examples  
 npm run test:simple -- --reporter html     # Generate HTML report
 npm run test:complex -- --reporter html    # Complex test HTML report
+```
+
+All tests:
+
+```sh
+npm test
 ```
