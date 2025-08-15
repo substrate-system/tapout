@@ -6,6 +6,12 @@
   </head>
   <body>
     <script type="module">
+      // Get timeout from URL parameters, default to 10000ms
+      const urlParams = new URLSearchParams(window.location.search)
+      const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
+      // Auto-finish delay: use 1 second for most cases, but for very short timeouts, use half the timeout
+      const autoFinishDelay = timeoutMs < 2000 ? timeoutMs / 2 : 1000
+      
       // Set up test completion detection
       let hasFinished = false
       let finishTimer = null
@@ -25,7 +31,7 @@
             console.log('Tests auto-finished (no explicit completion detected)')
             markTestsFinished()
           }
-        }, 1000)
+        }, autoFinishDelay)
       }
       
       // Override console methods to detect test completion
@@ -43,7 +49,7 @@
               console.log('Tests auto-finished (no explicit completion detected)')
               markTestsFinished()
             }
-          }, 1000)
+          }, autoFinishDelay)
         }
       }
       console.error = function(...args) {

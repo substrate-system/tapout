@@ -104,7 +104,7 @@ export async function runTestsInBrowser (
         })
 
         try {
-            await page.goto(`http://localhost:${PORT}/test-runner.html`)
+            await page.goto(`http://localhost:${PORT}/test-runner.html?timeout=${timeout}`)
 
             try {
                 await page.waitForFunction(

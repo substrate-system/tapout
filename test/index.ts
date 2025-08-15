@@ -232,6 +232,16 @@ test('CLI: can run tests in Edge', async (t) => {
     )
 })
 
+test('CLI: timeout parameter is passed to test runner', async (t) => {
+    const result = await runCliTest('timeout-validation-test.js', 5000)
+
+    t.equal(result.exitCode, 0, 'timeout validation test should exit with code 0')
+    t.ok(
+        result.stdout.includes('ok 1 - timeout parameter is properly passed to test runner'),
+        'should confirm timeout parameter is passed to HTML runner'
+    )
+})
+
 async function runCliTest (
     testFile:string,
     timeoutMs:number = 3000,
