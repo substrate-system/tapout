@@ -38,7 +38,7 @@ Examples:
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
 - [Example Tests](#example-tests)
-  * [More Examples](#more-examples)
+  * [Tests](#tests)
 
 <!-- tocstop -->
 
