@@ -31,6 +31,7 @@ function parseArgs () {
     let reporter: 'tap' | 'json' | 'junit' | 'list' | 'html' = 'tap'  // default TAP output
     let outdir: string | undefined
     let outfile: string | undefined
+    let customTimeout = false  // track if timeout was explicitly set
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--timeout' || args[i] === '-t') {
@@ -41,6 +42,7 @@ function parseArgs () {
                 process.exit(1)
             }
             timeout = timeoutValue
+            customTimeout = true
             i++  // skip the next argument since we consumed it
         } else if (args[i] === '--browser' || args[i] === '-b') {
             const browserValue = args[i + 1]
@@ -92,7 +94,15 @@ function parseArgs () {
         }
     }
 
-    return { timeout, browser, reporter, outdir, outfile, hasArgs: args.length > 0 }
+    return {
+        customTimeout,
+        timeout,
+        browser,
+        reporter,
+        outdir,
+        outfile,
+        hasArgs: args.length > 0
+    }
 }
 
 async function main () {

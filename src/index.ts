@@ -242,6 +242,7 @@ export async function runTestsInBrowser (
 ):Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
+    const customTimeout = options.timeout || false
     const browserType = options.browser || 'chromium'
     const reporter = options.reporter || 'tap'
 
@@ -345,7 +346,7 @@ export async function runTestsInBrowser (
         })
 
         try {
-            await page.goto(`http://localhost:${PORT}/test-runner.html`)
+            await page.goto(`http://localhost:${PORT}/test-runner.html?timeout=${timeout}&custom=${customTimeout}`)
 
             try {
                 await page.waitForFunction(

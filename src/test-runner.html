@@ -6,6 +6,23 @@
   </head>
   <body>
     <script type="module">
+      // Get timeout from URL parameters, default to 10000ms
+      const urlParams = new URLSearchParams(window.location.search)
+      const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
+      const isCustomTimeout = urlParams.get('custom') === 'true'
+      
+      // When a custom timeout is provided, use a much longer auto-finish delay
+      // to give tests time to complete naturally, but still have a fallback
+      let autoFinishDelay
+      if (isCustomTimeout) {
+        // For custom timeouts, use 80% of the timeout as auto-finish delay
+        // This gives tests most of the time but still provides a fallback
+        autoFinishDelay = Math.floor(timeoutMs * 0.8)
+      } else {
+        // Use a reasonable auto-finish delay for default timeout
+        autoFinishDelay = Math.max(500, Math.min(5000, timeoutMs * 0.2))
+      }
+      
       // Set up test completion detection
       let hasFinished = false
       let finishTimer = null
@@ -25,7 +42,7 @@
             console.log('Tests auto-finished (no explicit completion detected)')
             markTestsFinished()
           }
-        }, 1000)
+        }, autoFinishDelay)
       }
       
       // Override console methods to detect test completion
@@ -39,11 +56,14 @@
         if (!hasFinished) {
           if (finishTimer) clearTimeout(finishTimer)
           finishTimer = setTimeout(() => {
-            if (!hasFinished && !window.testsFinished && (Date.now() - lastLogTime) > 500) {
+            if (
+              !hasFinished && !window.testsFinished &&
+              (Date.now() - lastLogTime) > 500
+            ) {
               console.log('Tests auto-finished (no explicit completion detected)')
               markTestsFinished()
             }
-          }, 1000)
+          }, autoFinishDelay)
         }
       }
       console.error = function(...args) {
@@ -63,11 +83,29 @@
         markTestsFinished()
       })
       
+      // Handle unhandled promise rejections
       window.addEventListener('unhandledrejection', (event) => {
         console.error('Unhandled promise rejection:', event.reason)
         window.testsFailed = true
         markTestsFinished()
       })
+      
+      // Also catch console.error calls for additional error detection
+      const originalError = console.error
+      console.error = function(...args) {
+        originalError(...args)
+        lastLogTime = Date.now()
+        
+        // If we see certain error patterns, mark tests as failed
+        const errorMessage = args.join(' ')
+        if (errorMessage.includes('Error:') || 
+            errorMessage.includes('TypeError:') || 
+            errorMessage.includes('ReferenceError:') ||
+            errorMessage.includes('Failed') ||
+            errorMessage.includes('Uncaught')) {
+          window.testsFailed = true
+        }
+      }
       
       // Load and execute test code
       fetch('./test-bundle.js')

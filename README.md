@@ -45,7 +45,7 @@ Examples:
   * [`-t`, `--timeout`](#-t---timeout)
   * [`-r`, `--reporter`](#-r---reporter)
 - [Example Tests](#example-tests)
-  * [More Examples](#more-examples)
+  * [Tests](#tests)
 
 <!-- tocstop -->
 
