@@ -109,7 +109,8 @@ test('CLI: timeout test should handle timeouts', async (t) => {
     // Use 2 second timeout for this test
     const result = await runCliTest('timeout-test.js', 2000)
 
-    // This test might either timeout (exit code null) or auto-finish (exit code 0)
+    // This test might either timeout (exit code null) or auto-finish
+    // (exit code 0)
     // depending on the timing, both are acceptable behaviors
     t.ok(
         result.exitCode === 0 || result.exitCode === null || result.exitCode === 1,
