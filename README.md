@@ -46,9 +46,6 @@ Examples:
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
   * [`-r`, `--reporter`](#-r---reporter)
-- [Error Handling & Detection](#error-handling--detection)
-  * [Automatic Error Detection](#automatic-error-detection)
-  * [Example Error Scenarios](#example-error-scenarios)
 - [Example Tests](#example-tests)
   * [Tests](#tests)
 
