@@ -11,7 +11,8 @@
     "tapout": "./dist/cli.js"
   },
   "files": [
-    "./dist/*"
+    "./dist/*",
+    "./playwright.config.js"
   ],
   "exports": {
     ".": "./dist/index.js",
