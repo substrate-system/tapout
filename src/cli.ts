@@ -6,7 +6,7 @@ function parseArgs () {
     const args = process.argv.slice(2)
     let timeout = 10000  // default 10 seconds
     let customTimeout = false  // track if timeout was explicitly set
-    let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'  // default chrome
+    let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'
 
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--timeout' || args[i] === '-t') {

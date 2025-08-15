@@ -83,11 +83,29 @@
         markTestsFinished()
       })
       
+      // Handle unhandled promise rejections
       window.addEventListener('unhandledrejection', (event) => {
         console.error('Unhandled promise rejection:', event.reason)
         window.testsFailed = true
         markTestsFinished()
       })
+      
+      // Also catch console.error calls for additional error detection
+      const originalError = console.error
+      console.error = function(...args) {
+        originalError(...args)
+        lastLogTime = Date.now()
+        
+        // If we see certain error patterns, mark tests as failed
+        const errorMessage = args.join(' ')
+        if (errorMessage.includes('Error:') || 
+            errorMessage.includes('TypeError:') || 
+            errorMessage.includes('ReferenceError:') ||
+            errorMessage.includes('Failed') ||
+            errorMessage.includes('Uncaught')) {
+          window.testsFailed = true
+        }
+      }
       
       // Load and execute test code
       fetch('./test-bundle.js')

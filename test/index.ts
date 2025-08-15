@@ -73,6 +73,38 @@ test('CLI: failing test should fail', async (t) => {
     )
 })
 
+test('CLI: detects unhandled promise rejections', async (t) => {
+    const result = await runCliTest('unhandled-rejection-test.js')
+
+    t.equal(result.exitCode, 1, 'unhandled rejection should exit with code 1')
+    t.ok(
+        result.stdout.includes('Unhandled promise rejection') ||
+        result.stdout.includes('Page error') ||
+        result.stderr.includes('Unhandled promise rejection'),
+        'should show unhandled promise rejection message'
+    )
+    t.ok(
+        result.stderr.includes('Tests failed') || result.stdout.includes('Error running tests'),
+        'should indicate test failure'
+    )
+})
+
+test('CLI: detects uncaught exceptions', async (t) => {
+    const result = await runCliTest('uncaught-exception-test.js')
+
+    t.equal(result.exitCode, 1, 'uncaught exception should exit with code 1')
+    t.ok(
+        result.stdout.includes('Unhandled error') ||
+        result.stdout.includes('Page error') ||
+        result.stderr.includes('Unhandled error'),
+        'should show unhandled error message'
+    )
+    t.ok(
+        result.stderr.includes('Tests failed') || result.stdout.includes('Error running tests'),
+        'should indicate test failure'
+    )
+})
+
 test('CLI: timeout test should handle timeouts', async (t) => {
     // Use 2 second timeout for this test
     const result = await runCliTest('timeout-test.js', 2000)

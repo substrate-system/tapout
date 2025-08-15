@@ -34,7 +34,11 @@ export async function readStdin (): Promise<string> {
 
 export async function runTestsInBrowser (
     testCode:string,
-    options:{ timeout?:number; customTimeout?:boolean; browser?:SupportedBrowser } = {}
+    options:{
+        timeout?:number;
+        customTimeout?:boolean;
+        browser?:SupportedBrowser;
+    } = {}
 ):Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
@@ -79,7 +83,9 @@ export async function runTestsInBrowser (
             'chromium' :
             browserType]).launch(browserOptions))
         const page = await browser.newPage()
-        const browserName = browserType === 'edge' ? 'edge' : browser.browserType().name()
+        const browserName = (browserType === 'edge' ?
+            'edge' :
+            browser.browserType().name())
 
         // TAP comment -- which browser is being used
         console.log(`# Running tests in ${browserName}`)
@@ -94,8 +100,14 @@ export async function runTestsInBrowser (
             // But ignore common browser resource loading messages
             if (
                 text.startsWith('not ok') ||
-                (text.includes('Error:') && !text.includes('Failed to load resource')) ||
-                (text.includes('Failed') && !text.includes('Failed to load resource')) ||
+                (
+                    text.includes('Error:') &&
+                    !text.includes('Failed to load resource')
+                ) ||
+                (
+                    text.includes('Failed') &&
+                    !text.includes('Failed to load resource')
+                ) ||
                 text.includes('FAIL') ||
                 (
                     msg.type() === 'error' &&
