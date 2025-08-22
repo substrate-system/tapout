@@ -52,7 +52,7 @@ Examples:
 
 </details>
 
-## Features
+## Featuring
 
 - **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit), or Edge
 - **Smart timeout handling**: Respects custom timeouts with intelligent
@@ -62,7 +62,7 @@ Examples:
 - **Beautiful HTML reports**: Generate responsive HTML reports perfect for
   CI/CD or sharing
 - **TAP compatible**: Standard TAP output works with any TAP formatter
-- **Zero configuration**: Just pipe your JavaScript and go
+- **Zero configuration**: Just pipe JavaScript into this command
 - **CI/CD friendly**: Proper exit codes and error detection for
   automated testing
 
@@ -84,6 +84,27 @@ Use shell redirection
 
 ```sh
 cat ./test/index.js | npx tapout | npx tap-spec
+```
+
+### CI
+
+After `npm install`, you will need to do an `npx playwright install`.
+
+For example, in Github CI,
+
+```yml
+# ...
+
+    - name: npm install, build
+      run: |
+        npm install
+        npm run build --if-present
+        npm run lint
+        npx playwright install --with-deps
+      env:
+        CI: true
+
+# ...
 ```
 
 ### Generate HTML reports
