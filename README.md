@@ -38,9 +38,10 @@ Examples:
 
 <!-- toc -->
 
-- [Features](#features)
+- [Featuring](#featuring)
 - [Install](#install)
 - [Use](#use)
+  * [CI](#ci)
   * [Generate HTML reports](#generate-html-reports)
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
