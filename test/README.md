@@ -10,7 +10,7 @@ This directory contains example tests.
 - **`timeout-test.js`** - Test that runs indefinitely to demonstrate timeout behavior
 - **`index.ts`** - Unit tests for the tapout module itself
 
-## npm Scripts
+## npm scripts
 
 You can run the example tests with npm scripts:
 
@@ -29,7 +29,8 @@ npm test
 
 ## Usage Examples
 
-These demonstrate how to use tapout with different types of JavaScript test code:
+These demonstrate how to use tapout with different types of
+JavaScript test code:
 
 ```bash
 # Basic usage
@@ -37,5 +38,5 @@ cat test/simple-test.js | npx tapout
 
 # In a pipeline with bundlers
 browserify test/my-tests.js | npx tapout
-esbuild test/my-tests.js --bundle | npx tapout
+esbuild test/my-tests.js --bundle | npx tapout | npx tap-spec
 ```

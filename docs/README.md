@@ -1,5 +1,6 @@
 # HTML Reporter Examples
-# [View the latest test results](test-results.html)
+
+# [View an example HTML test](test-results.html)
 
 This directory contains examples of the HTML reporter output.
 
