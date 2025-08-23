@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sample Tapout HTML Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    h1 { color: #2c3e50; }
+    .pass { color: green; }
+    .fail { color: red; }
+    .test { margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Sample Tapout HTML Report</h1>
+  <div class="test pass">
+    <strong>✓ test 1:</strong> should add numbers (passed)
+  </div>
+  <div class="test fail">
+    <strong>✗ test 2:</strong> should throw error (failed)
+    <div>Expected error to be thrown</div>
+  </div>
+  <div class="test pass">
+    <strong>✓ test 3:</strong> should return true (passed)
+  </div>
+  <hr>
+  <div><strong>Summary:</strong> 2 passed, 1 failed</div>
+</body>
+</html>
