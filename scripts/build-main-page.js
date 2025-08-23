@@ -8,40 +8,14 @@ const mainPageContent = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tapout Testing</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
             min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 3rem;
-        }
-        
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
         }
         
         .header p {
             font-size: 1.2rem;
-            opacity: 0.9;
         }
         
         .content-grid {
@@ -92,12 +66,10 @@ const mainPageContent = `<!DOCTYPE html>
         
         .footer {
             text-align: center;
-            color: white;
             opacity: 0.8;
         }
         
         .footer a {
-            color: white;
             text-decoration: underline;
         }
         
