@@ -298,7 +298,9 @@ export async function runTestsInBrowser (
             browser.browserType().name()
 
         // TAP comment -- which browser is being used
-        console.log(`# Running tests in ${browserName}`)
+        if (reporter === 'tap') {
+            console.log(`# Running tests in ${browserName}`)
+        }
 
         let hasErrors = false
 
