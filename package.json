@@ -32,6 +32,7 @@
     "test:all-examples": "npm run test:simple && npm run test:complex",
     "build-esm": "esbuild src/*.ts --format=esm --metafile=dist/meta.json --keep-names --tsconfig=tsconfig.build.json --outdir=./dist --sourcemap && tsc --emitDeclarationOnly --project tsconfig.build.json --outDir dist && cp src/test-runner.html dist/",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-esm",
+    "build-docs": "typedoc ./src/index.ts",
     "toc": "markdown-toc --maxdepth 3 -i README.md",
     "changelog": "auto-changelog -p --template keepachangelog --breaking-pattern 'BREAKING CHANGE:'",
     "preversion": "npm run lint",
@@ -56,6 +57,7 @@
     "eslint-config-standard": "^17.1.0",
     "markdown-toc": "^1.2.0",
     "tap-spec": "^5.0.0",
+    "typedoc": "^0.28.10",
     "typescript": "^5.7.2"
   },
   "license": "SEE LICENSE IN LICENSE",
