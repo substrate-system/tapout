@@ -15,8 +15,10 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Allow only one concurrent deployment, skipping runs queued between the run
+#  . n-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production
+#   deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -31,7 +33,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Install
-        run: npm install
+        run: |
+          npm install
+          npx playwright install --with-deps
+      - name: Build Source
+        run: npm run build
       - name: Build
         run: npm run build-pages
       - name: Upload artifact

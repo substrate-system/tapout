@@ -4,5 +4,6 @@ bundle.js
 src/*.js
 dist
 .env
-
 testing
+docs/
+
