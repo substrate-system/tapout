@@ -29,9 +29,7 @@ const mainPageContent = `<!DOCTYPE html>
             display: inline-block;
             padding: 0.75rem 1.5rem;
             text-decoration: none;
-            border-radius: 6px;
             font-weight: 500;
-            transition: transform 0.2s ease;
         }
         
         .btn:hover {
