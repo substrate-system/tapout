@@ -14,15 +14,19 @@ const mainPageContent = `<!DOCTYPE html>
             min-height: 100vh;
             margin: 1rem;
         }
+
+        h2 {
+            border-bottom: 2px solid;
+        }
         
         .header p {
             font-size: 1.2rem;
         }
         
         .btn {
+            border: 2px solid;
+            color: black;
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             padding: 0.75rem 1.5rem;
             text-decoration: none;
             border-radius: 6px;
@@ -68,10 +72,7 @@ const mainPageContent = `<!DOCTYPE html>
         <a href="./examples/simple-test-results.html" class="btn">View Example</a>
     
         <h2>API Docs</h2>
-        <p>
-            Learn how to use the API and integrate it into your
-            projects.
-        </p>
+
         <a href="./api/" class="btn">View Documentation</a>
         
         <div class="footer">
