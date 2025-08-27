@@ -64,8 +64,7 @@ Examples:
   CI/CD or sharing
 - **TAP compatible**: Standard TAP output works with any TAP formatter
 - **Zero configuration**: Just pipe JavaScript into this command
-- **CI/CD friendly**: Proper exit codes and error detection for
-  automated testing
+- **CI/CD friendly**: Proper exit codes and error detection
 
 ## Install
 
