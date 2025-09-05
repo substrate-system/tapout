@@ -23,7 +23,7 @@ interface TestResult {
 }
 
 test('CLI: simple test should pass', async (t) => {
-    const result = await runCliTest('simple-test.js')
+    const result = await runCliTest('_simple-test.js')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0')
     t.ok(
@@ -37,7 +37,7 @@ test('CLI: simple test should pass', async (t) => {
 })
 
 test('CLI: complex test should pass', async (t) => {
-    const result = await runCliTest('tape-test.js')
+    const result = await runCliTest('_tape-test.js')
 
     t.equal(result.exitCode, 0, 'complex test should exit with code 0')
     t.ok(
@@ -59,7 +59,7 @@ test('CLI: complex test should pass', async (t) => {
 })
 
 test('CLI: failing test should fail', async (t) => {
-    const result = await runCliTest('failing-test.js')
+    const result = await runCliTest('_failing-test.js')
 
     t.equal(result.exitCode, 1, 'failing test should exit with code 1')
     t.ok(
@@ -74,7 +74,7 @@ test('CLI: failing test should fail', async (t) => {
 })
 
 test('CLI: detects unhandled promise rejections', async (t) => {
-    const result = await runCliTest('unhandled-rejection-test.js')
+    const result = await runCliTest('_unhandled-rejection-test.js')
 
     t.equal(result.exitCode, 1, 'unhandled rejection should exit with code 1')
     t.ok(
@@ -90,7 +90,7 @@ test('CLI: detects unhandled promise rejections', async (t) => {
 })
 
 test('CLI: detects uncaught exceptions', async (t) => {
-    const result = await runCliTest('uncaught-exception-test.js')
+    const result = await runCliTest('_uncaught-exception-test.js')
 
     t.equal(result.exitCode, 1, 'uncaught exception should exit with code 1')
     t.ok(
@@ -107,7 +107,7 @@ test('CLI: detects uncaught exceptions', async (t) => {
 
 test('CLI: timeout test should handle timeouts', async (t) => {
     // Use 2 second timeout for this test
-    const result = await runCliTest('timeout-test.js', 2000)
+    const result = await runCliTest('_timeout-test.js', 2000)
 
     // This test might either timeout (exit code null) or auto-finish
     // (exit code 0)
@@ -226,7 +226,7 @@ test('CLI: handles invalid JavaScript', async (t) => {
 })
 
 test('CLI: can run tests in Firefox', async (t) => {
-    const result = await runCliTest('simple-test.js', 3000, 'firefox')
+    const result = await runCliTest('_simple-test.js', 3000, 'firefox')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Firefox')
     t.ok(
@@ -240,7 +240,7 @@ test('CLI: can run tests in Firefox', async (t) => {
 })
 
 test('CLI: can run tests in WebKit', async (t) => {
-    const result = await runCliTest('simple-test.js', 3000, 'webkit')
+    const result = await runCliTest('_simple-test.js', 3000, 'webkit')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in WebKit')
     t.ok(
@@ -254,7 +254,7 @@ test('CLI: can run tests in WebKit', async (t) => {
 })
 
 test('CLI: can run tests in Edge', async (t) => {
-    const result = await runCliTest('simple-test.js', 3000, 'edge')
+    const result = await runCliTest('_simple-test.js', 3000, 'edge')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Edge')
     t.ok(
@@ -329,7 +329,7 @@ setTimeout(() => {
 })
 
 test('CLI: timeout parameter is passed to test runner', async (t) => {
-    const result = await runCliTest('timeout-validation-test.js', 5000)
+    const result = await runCliTest('_timeout-validation-test.js', 5000)
 
     t.equal(result.exitCode, 0, 'timeout validation test should exit with code 0')
     t.ok(
