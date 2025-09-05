@@ -156,6 +156,12 @@ Tests will exit with code 1 if any errors are detected, making it perfect for CI
 
 Choose the output format. Default is TAP.
 
+>
+> [!NOTE]  
+> For HTML output, you will want to redirect stdout to a file.
+> `cat test.js | npx tapout --reporter html > test-output.html`
+>
+
 **Available reporters:**
 - `tap` - TAP output (default) - Standard Test Anything Protocol format
 - `html` - Generate an HTML report file with beautiful, responsive design
@@ -237,19 +243,11 @@ npx esbuild ./test/index.ts | npx tapout
 See the [`test/` directory](./test/).
 
 ```bash
-npm run test:simple     # Basic passing test
-npm run test:complex    # Complex async test  
-npm run test:failing    # Failing test (exits with code 1)
-npm run test:timeout    # Test timeout behavior
-npm run test:all-examples  # Run passing examples
+npm test
+```
 
+```sh
 # HTML reporter examples  
 npm run test:simple -- --reporter html     # Generate HTML report
 npm run test:complex -- --reporter html    # Complex test HTML report
-```
-
-All tests:
-
-```sh
-npm test
 ```
