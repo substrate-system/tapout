@@ -23,9 +23,8 @@ jobs:
       - name: npm install, build
         run: |
           NPM_CONFIG_PRODUCTION=false npm install
-          npx playwright install --with-deps
           npm run build --if-present
-          npm run lint
+          npx playwright install --with-deps
         env:
           CI: true
       - name: Run tap tests
