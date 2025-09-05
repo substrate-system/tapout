@@ -234,6 +234,7 @@ export async function runTestsInBrowser (
     testCode:string,
     options:{
         timeout?:number;
+        customTimeout?:boolean;
         browser?:SupportedBrowser;
         reporter?: 'tap' | 'html';
         outdir?: string;
@@ -242,7 +243,7 @@ export async function runTestsInBrowser (
 ):Promise<void> {
     const PORT = 8123
     const timeout = options.timeout || 10000
-    const customTimeout = options.timeout || false
+    const customTimeout = options.customTimeout || false
     const browserType = options.browser || 'chromium'
     const reporter = options.reporter || 'tap'
 

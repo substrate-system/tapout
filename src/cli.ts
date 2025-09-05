@@ -106,7 +106,7 @@ function parseArgs () {
 
 async function main () {
     try {
-        const { timeout, browser, reporter, outdir, outfile, hasArgs } = parseArgs()
+        const { customTimeout, timeout, browser, reporter, outdir, outfile, hasArgs } = parseArgs()
 
         // If no arguments and stdin is a TTY (interactive terminal), show help
         if (!hasArgs && process.stdin.isTTY) {
@@ -121,7 +121,14 @@ async function main () {
             process.exit(1)
         }
 
-        await runTestsInBrowser(testCode, { timeout, browser, reporter, outdir, outfile })
+        await runTestsInBrowser(testCode, {
+            timeout,
+            customTimeout,
+            browser,
+            reporter,
+            outdir,
+            outfile
+        })
     } catch (error) {
         console.error('Error running tests:', error)
         process.exit(1)
