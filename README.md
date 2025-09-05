@@ -205,7 +205,11 @@ git push
 
 ## Example Tests
 
-Write tests for the browser environment:
+Write tests for the browser environment.
+
+> [!TIP]
+> End the tests explicity with `window.testsFinished = true`.
+> Else they time out naturally, which is ok too.
 
 ```js
 // test/index.ts
@@ -213,6 +217,11 @@ import { test } from '@substrate-system/tapzero'
 
 test('example', t => {
     t.ok(document.body, 'should find a body tag')
+})
+
+test('all done', t => {
+  // @ts-expect-error explicitly end
+  window.testsFinished = true
 })
 ```
 
