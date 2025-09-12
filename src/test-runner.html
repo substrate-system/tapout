@@ -10,11 +10,16 @@
       const urlParams = new URLSearchParams(window.location.search)
       const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
       const isCustomTimeout = urlParams.get('custom') === 'true'
+      const noAutoFinish = urlParams.get('noAutoFinish') === 'true'
       
       // When a custom timeout is provided, use a much longer auto-finish delay
       // to give tests time to complete naturally, but still have a fallback
       let autoFinishDelay
-      if (isCustomTimeout) {
+      if (noAutoFinish) {
+        // If auto-finish is disabled, we still need some fallback
+        // Use the full timeout as the delay
+        autoFinishDelay = timeoutMs
+      } else if (isCustomTimeout) {
         // For custom timeouts, use 80% of the timeout as auto-finish delay
         // This gives tests most of the time but still provides a fallback
         autoFinishDelay = Math.floor(timeoutMs * 0.8)
@@ -37,12 +42,14 @@
       // Auto-finish tests after a short delay if no explicit completion
       function resetFinishTimer() {
         if (finishTimer) clearTimeout(finishTimer)
-        finishTimer = setTimeout(() => {
-          if (!hasFinished && !window.testsFinished) {
-            console.log('Tests auto-finished (no explicit completion detected)')
-            markTestsFinished()
-          }
-        }, autoFinishDelay)
+        if (!noAutoFinish) {
+          finishTimer = setTimeout(() => {
+            if (!hasFinished && !window.testsFinished) {
+              console.log('Tests auto-finished (no explicit completion detected)')
+              markTestsFinished()
+            }
+          }, autoFinishDelay)
+        }
       }
       
       // Override console methods to detect test completion
@@ -52,8 +59,8 @@
       console.log = function(...args) {
         originalConsole.log(...args)
         lastLogTime = Date.now()
-        // Only reset timer if we haven't seen logs for a while
-        if (!hasFinished) {
+        // Only reset timer if we haven't seen logs for a while and auto-finish is enabled
+        if (!hasFinished && !noAutoFinish) {
           if (finishTimer) clearTimeout(finishTimer)
           finishTimer = setTimeout(() => {
             if (
