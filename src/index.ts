@@ -9,19 +9,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export type SupportedBrowser = 'chromium'|'firefox'|'webkit'|'edge'
 
-const browsers: Record<SupportedBrowser, BrowserType> = {
+const browsers:Record<SupportedBrowser, BrowserType> = {
     chromium,
     firefox,
     webkit,
-    edge: chromium // Edge uses Chromium engine
+    edge: chromium  // Edge uses Chromium engine
 }
 
 function parseTestLine (line: string) {
     const test = {
         name: '',
-        status: 'passed' as 'passed' | 'failed' | 'skipped',
+        status: 'passed' as 'passed'|'failed'|'skipped',
         duration: Math.floor(Math.random() * 100) + 10, // Mock duration
-        error: undefined as string | undefined
+        error: undefined as string|undefined
     }
 
     // Determine if test passed or failed
@@ -37,17 +37,17 @@ function parseTestLine (line: string) {
 }
 
 async function generateHTMLReport (
-    testResults: Array<{
-        name: string;
-        status: 'passed' | 'failed' | 'skipped';
-        duration?: number;
-        error?: string;
+    testResults:Array<{
+        name:string;
+        status:'passed' | 'failed' | 'skipped';
+        duration?:number;
+        error?:string;
     }>,
-    browserName: string,
-    duration: number,
-    outdir?: string,
-    outfile?: string
-): Promise<string | null> {
+    browserName:string,
+    duration:number,
+    outdir?:string,
+    outfile?:string
+):Promise<string|null> {
     const html = generateHTMLContent(testResults, browserName, duration)
 
     const filename = outfile || 'index.html'
@@ -68,7 +68,7 @@ async function generateHTMLReport (
     return outputPath
 }
 
-export async function readStdin (): Promise<string> {
+export async function readStdin ():Promise<string> {
     return new Promise((resolve, reject) => {
         let data = ''
 
@@ -224,7 +224,7 @@ export async function runTestsInBrowser (
                 } else {
                     // Tests passed - no additional output needed for TAP
                 }
-            } catch (timeoutError: any) {
+            } catch (timeoutError:any) {
                 if (
                     timeoutError.message &&
                     timeoutError.message.includes('Timeout')
