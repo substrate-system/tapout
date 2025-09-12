@@ -114,24 +114,14 @@
         }
       }
       
-      // Load and execute test code
-      fetch('./test-bundle.js')
-        .then(response => response.text())
-        .then(testCode => {
-          try {
-            // Execute the test code
-            eval(testCode)
-            
-            // Final fallback - mark as finished after code execution
-            resetFinishTimer()
-          } catch (error) {
-            console.error('Error executing test code:', error)
-            window.testsFailed = true
-            markTestsFinished()
-          }
+      // Load and execute test code as ES module
+      import('./test-bundle.js')
+        .then(() => {
+          // Final fallback - mark as finished after code execution
+          resetFinishTimer()
         })
         .catch(error => {
-          console.error('Error loading test code:', error)
+          console.error('Error loading or executing test code:', error)
           window.testsFailed = true
           markTestsFinished()
         })
