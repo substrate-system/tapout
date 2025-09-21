@@ -32,5 +32,7 @@ jobs:
         env:
           CI: true
       - name: Run tap tests
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: 0
         run: |
-          xvfb-run --server-args="-screen 0 1920x1080x24" npm test
+          npm test
