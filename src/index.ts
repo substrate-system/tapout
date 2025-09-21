@@ -143,7 +143,18 @@ export async function runTestsInBrowser (
 
         const browserOptions = browserType === 'edge' ?
             { channel: 'msedge' as const } :
-            {}
+            (browserType === 'firefox' ?
+                {
+                    headless: true,
+                    args: [
+                        '--no-sandbox',
+                        '--disable-dev-shm-usage',
+                        '--disable-gpu',
+                        '--disable-web-security',
+                        '--disable-features=VizDisplayCompositor'
+                    ]
+                } :
+                {})
 
         const browser = await browsers[browserType === 'edge' ?
             'chromium' :

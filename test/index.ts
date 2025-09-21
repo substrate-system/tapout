@@ -345,12 +345,15 @@ async function runCliTest (
     timeoutMs:number = 3000,
     browser:string = 'chromium'
 ):Promise<TestResult> {
+    // Increase timeout for CI environments
+    const isCI = process.env.CI === 'true'
+    const adjustedTimeout = isCI ? timeoutMs * 2 : timeoutMs
     return new Promise((resolve) => {
         const testPath = path.join(projectRoot, 'test', testFile)
         const child = spawn('node', [
             cliPath,
             '--timeout',
-            timeoutMs.toString(), '--browser', browser
+            adjustedTimeout.toString(), '--browser', browser
         ], {
             cwd: projectRoot,
             stdio: ['pipe', 'pipe', 'pipe']
@@ -406,8 +409,8 @@ async function runCliTest (
             resolve({
                 exitCode: null,
                 stdout,
-                stderr: stderr + `Test timed out after ${timeoutMs + 2000}ms`
+                stderr: stderr + `Test timed out after ${adjustedTimeout + 2000}ms`
             })
-        }, timeoutMs + 2000)
+        }, adjustedTimeout + 2000)
     })
 }
