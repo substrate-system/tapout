@@ -11,6 +11,25 @@ The easiest way to run tests in a browser from the command line.
 Just pipe some JS into this command. A spiritual successor
 to [tape-run](https://github.com/tape-testing/tape-run).
 
+<details><summary><h2>Contents</h2></summary>
+
+<!-- toc -->
+
+- [Featuring](#featuring)
+- [Install](#install)
+- [Use](#use)
+  * [CI](#ci)
+  * [Generate HTML reports](#generate-html-reports)
+  * [`-b`, `--browser`](#-b---browser)
+  * [`-t`, `--timeout`](#-t---timeout)
+  * [`-r`, `--reporter`](#-r---reporter)
+- [Example Tests](#example-tests)
+  * [Tests](#tests)
+
+<!-- tocstop -->
+
+</details>
+
 This uses [playwright](https://playwright.dev/) under the hood.
 
 ```
@@ -33,25 +52,6 @@ Examples:
   cat test.js | tapout --reporter html --outdir ./reports
   cat test.js | tapout --reporter html --outfile my-test-results.html
 ```
-
-<details><summary><h2>Contents</h2></summary>
-
-<!-- toc -->
-
-- [Featuring](#featuring)
-- [Install](#install)
-- [Use](#use)
-  * [CI](#ci)
-  * [Generate HTML reports](#generate-html-reports)
-  * [`-b`, `--browser`](#-b---browser)
-  * [`-t`, `--timeout`](#-t---timeout)
-  * [`-r`, `--reporter`](#-r---reporter)
-- [Example Tests](#example-tests)
-  * [Tests](#tests)
-
-<!-- tocstop -->
-
-</details>
 
 ## Featuring
 
