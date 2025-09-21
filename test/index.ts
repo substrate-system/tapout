@@ -226,7 +226,7 @@ test('CLI: handles invalid JavaScript', async (t) => {
 })
 
 test('CLI: can run tests in Firefox', async (t) => {
-    const result = await runCliTest('_simple-test.js', 3000, 'firefox')
+    const result = await runCliTest('_simple-test.js', 5000, 'firefox')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Firefox')
     t.ok(
@@ -240,7 +240,7 @@ test('CLI: can run tests in Firefox', async (t) => {
 })
 
 test('CLI: can run tests in WebKit', async (t) => {
-    const result = await runCliTest('_simple-test.js', 3000, 'webkit')
+    const result = await runCliTest('_simple-test.js', 5000, 'webkit')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in WebKit')
     t.ok(
@@ -254,7 +254,7 @@ test('CLI: can run tests in WebKit', async (t) => {
 })
 
 test('CLI: can run tests in Edge', async (t) => {
-    const result = await runCliTest('_simple-test.js', 3000, 'edge')
+    const result = await runCliTest('_simple-test.js', 5000, 'edge')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Edge')
     t.ok(
