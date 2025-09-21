@@ -20,10 +20,6 @@ jobs:
         run: |
           touch .env
           echo "NODE_ENV=\"CI\"" >> .env
-      - name: Install Firefox
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox
       - name: npm install, build
         run: |
           NPM_CONFIG_PRODUCTION=false npm install
