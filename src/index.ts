@@ -146,13 +146,11 @@ export async function runTestsInBrowser (
             (browserType === 'firefox' ?
                 {
                     headless: true,
-                    args: [
-                        '--no-sandbox',
-                        '--disable-dev-shm-usage',
-                        '--disable-gpu',
-                        '--disable-web-security',
-                        '--disable-features=VizDisplayCompositor'
-                    ]
+                    firefoxUserPrefs: {
+                        'security.sandbox.content.level': 0,
+                        'security.sandbox.plugin.level': 0,
+                        'dom.webgpu.enabled': false
+                    }
                 } :
                 {})
 
