@@ -18,6 +18,7 @@ to [tape-run](https://github.com/tape-testing/tape-run).
 - [Featuring](#featuring)
 - [Install](#install)
 - [Use](#use)
+  * [`window.testsFinished`](#windowtestsfinished)
   * [CI](#ci)
   * [Generate HTML reports](#generate-html-reports)
   * [`-b`, `--browser`](#-b---browser)
