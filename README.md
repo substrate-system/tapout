@@ -83,7 +83,27 @@ cat ./test/index.js | npx tapout
 Use shell redirection
 
 ```sh
-cat ./test/index.js | npx tapout | npx tap-spec
+npx esbuild --bundle ./test/index.ts | npx tapout | npx tap-spec
+```
+
+### `window.testsFinished`
+
+The test browser will automatically close within few seconds of no activity.
+
+To explicitly end the tests, set a property on `window`.
+
+```js
+import { test } from '@substrate-system/tapzero'
+
+test('example test', (t) => {
+  t.ok(true)
+})
+
+test('all done', () => {
+  // This will cause the tests to exit immediately.
+  // @ts-expect-error tests
+  window.testsFinished = true
+})
 ```
 
 ### CI

@@ -17,7 +17,7 @@ const projectRoot = process.cwd()
 const cliPath = path.join(projectRoot, 'dist', 'cli.js')
 
 interface TestResult {
-    exitCode:number | null
+    exitCode:number|null
     stdout:string
     stderr:string
 }
