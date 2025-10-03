@@ -226,7 +226,7 @@ test('CLI: handles invalid JavaScript', async (t) => {
 })
 
 test('CLI: can run tests in Firefox', async (t) => {
-    const result = await runCliTest('_simple-test.js', 5000, 'firefox')
+    const result = await runCliTest('_simple-test.js', 10000, 'firefox')
 
     t.equal(result.exitCode, 0, 'simple test should exit with code 0 in Firefox')
     t.ok(

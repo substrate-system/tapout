@@ -6,4 +6,5 @@ dist
 .env
 testing
 docs/
+.claude
 
