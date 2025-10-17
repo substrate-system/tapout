@@ -105,6 +105,22 @@ test('CLI: detects uncaught exceptions', async (t) => {
     )
 })
 
+test('CLI: fails when test logs error without throwing', async (t) => {
+    const result = await runCliTest('_missing-element-test.js')
+
+    t.equal(result.exitCode, 1, 'test with console.error should exit with code 1')
+    t.ok(
+        result.stdout.includes('not ok 1') ||
+        result.stderr.includes('Error'),
+        'should show test failure'
+    )
+    t.ok(
+        (result.stderr.includes('Tests failed') ||
+        result.stdout.includes('Error running tests')),
+        'should indicate test failure in stderr'
+    )
+})
+
 test('CLI: timeout test should handle timeouts', async (t) => {
     // Use 2 second timeout for this test
     const result = await runCliTest('_timeout-test.js', 2000)
