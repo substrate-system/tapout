@@ -20,9 +20,9 @@
         // Use the full timeout as the delay
         autoFinishDelay = timeoutMs
       } else if (isCustomTimeout) {
-        // For custom timeouts, use 80% of the timeout as auto-finish delay
-        // This gives tests most of the time but still provides a fallback
-        autoFinishDelay = Math.floor(timeoutMs * 0.8)
+        // For custom timeouts, use 25% of timeout (min 2s, max 3s) as auto-finish delay
+        // This gives tests 75% of the timeout to run, while auto-finish waits 2-3s
+        autoFinishDelay = Math.min(Math.max(timeoutMs * 0.25, 2000), 3000)
       } else {
         // Use a reasonable auto-finish delay for default timeout
         autoFinishDelay = Math.max(500, Math.min(5000, timeoutMs * 0.2))
