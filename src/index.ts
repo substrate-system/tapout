@@ -85,6 +85,32 @@ export async function readStdin ():Promise<string> {
     })
 }
 
+/**
+ * Transform test code to support Vite environment variables.
+ * Replaces import.meta.env references with appropriate values.
+ */
+function transformViteEnv (code:string):string {
+    // Replace Vite environment variables with test-appropriate values
+    let transformed = code
+
+    // Replace import.meta.env.DEV with true (tests run in dev mode)
+    transformed = transformed.replace(/import\.meta\.env\.DEV/g, 'true')
+
+    // Replace import.meta.env.PROD with false
+    transformed = transformed.replace(/import\.meta\.env\.PROD/g, 'false')
+
+    // Replace import.meta.env.MODE with "test"
+    transformed = transformed.replace(/import\.meta\.env\.MODE/g, '"test"')
+
+    // Replace import.meta.env.BASE_URL with "/"
+    transformed = transformed.replace(/import\.meta\.env\.BASE_URL/g, '"/"')
+
+    // Replace import.meta.env.SSR with false
+    transformed = transformed.replace(/import\.meta\.env\.SSR/g, 'false')
+
+    return transformed
+}
+
 export async function runTestsInBrowser (
     testCode:string,
     options:{
@@ -124,9 +150,10 @@ export async function runTestsInBrowser (
                 res.writeHead(200, { 'Content-Type': 'text/html' })
                 res.end(htmlContent)
             } else if (pathname === '/test-bundle.js') {
-                // Serve the test code
+                // Serve the test code with Vite env transformation
+                const transformedCode = transformViteEnv(testCode)
                 res.writeHead(200, { 'Content-Type': 'application/javascript' })
-                res.end(testCode)
+                res.end(transformedCode)
             } else {
                 // 404 for other paths
                 res.writeHead(404)

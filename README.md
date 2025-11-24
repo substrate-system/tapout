@@ -19,6 +19,7 @@ to [tape-run](https://github.com/tape-testing/tape-run).
 - [Install](#install)
 - [Use](#use)
   * [`window.testsFinished`](#windowtestsfinished)
+  * [Vite environment variables](#vite-environment-variables)
   * [CI](#ci)
   * [Generate HTML reports](#generate-html-reports)
   * [`-b`, `--browser`](#-b---browser)
@@ -56,13 +57,11 @@ Examples:
 
 ## Featuring
 
-- **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit), or Edge
-- **Smart timeout handling**: Respects custom timeouts with intelligent
-  auto-finish behavior
-- **Comprehensive error detection**: Automatically catches unhandled promise
-  rejections, uncaught exceptions, and console errors
-- **Beautiful HTML reports**: Generate responsive HTML reports perfect for
-  CI/CD or sharing
+- **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit),
+  or Edge
+- **Vite support**: Automatic support for `import.meta.env` variables
+- **Smart timeout handling**: Use custom timeouts or auto-timeout
+- **Beautiful HTML reports**: Generate HTML reports perfect for CI
 - **TAP compatible**: Standard TAP output works with any TAP formatter
 - **Zero configuration**: Just pipe JavaScript into this command
 - **CI/CD friendly**: Proper exit codes and error detection
@@ -106,6 +105,32 @@ test('all done', () => {
   window.testsFinished = true
 })
 ```
+
+### Vite environment variables
+
+Vite environment variables, like `import.meta.env.DEV` are defined, so your
+tests wont break if you use them in your application code.
+
+* `import.meta.env.DEV` - `true` (tests run in development mode)
+* `import.meta.env.PROD` - `false`
+* `import.meta.env.MODE` - `"test"`
+* `import.meta.env.BASE_URL` - `"/"`
+* `import.meta.env.SSR` - `false`
+
+
+#### Example
+
+```js
+// Your Vite app code can use these environment variables
+if (import.meta.env.DEV) {
+  console.log('Running in development mode')
+}
+
+const apiUrl = import.meta.env.DEV ?
+  'http://localhost:3000/api' :
+  'https://production.api.com'
+```
+
 
 ### CI
 

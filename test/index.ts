@@ -356,6 +356,32 @@ test('CLI: timeout parameter is passed to test runner', async (t) => {
     )
 })
 
+test('CLI: Vite environment variables should be available', async (t) => {
+    const result = await runCliTest('_vite-env-test.js', 5000)
+
+    t.equal(result.exitCode, 0, 'Vite env test should exit with code 0')
+    t.ok(
+        result.stdout.includes('ok 1 - true is defined (true)'),
+        'should have DEV env var transformed to true'
+    )
+    t.ok(
+        result.stdout.includes('ok 2 - false is defined (false)'),
+        'should have PROD env var transformed to false'
+    )
+    t.ok(
+        result.stdout.includes('ok 3 - "test" is defined (test)'),
+        'should have MODE env var transformed to "test"'
+    )
+    t.ok(
+        result.stdout.includes('ok 4 - "/" is defined (/)'),
+        'should have BASE_URL env var transformed to "/"'
+    )
+    t.ok(
+        result.stdout.includes('ok 5 - false is defined (false)'),
+        'should have SSR env var transformed to false'
+    )
+})
+
 async function runCliTest (
     testFile:string,
     timeoutMs:number = 3000,
