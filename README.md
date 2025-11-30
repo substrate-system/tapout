@@ -25,6 +25,7 @@ to [tape-run](https://github.com/tape-testing/tape-run).
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
   * [`-r`, `--reporter`](#-r---reporter)
+- [Accessibility Testing with Axe](#accessibility-testing-with-axe)
 - [Example Tests](#example-tests)
   * [Tests](#tests)
 
@@ -55,7 +56,7 @@ Examples:
   cat test.js | tapout --reporter html --outfile my-test-results.html
 ```
 
-## Featuring
+## _Featuring_
 
 - **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit),
   or Edge
@@ -242,7 +243,8 @@ The HTML reporter generates an `index.html` file by default with:
 - If neither `--outdir` nor `--outfile` is specified, HTML output is sent
   to stdout
 
-**GitHub Pages Integration:**
+### GitHub Pages Integration
+
 The generated HTML file is self-contained and can be easily hosted on GitHub
 Pages or any static hosting service. Simply commit the HTML file to
 your repository.
@@ -253,6 +255,204 @@ npm test 2>&1 | npx tapout --reporter html --outfile test-results.html
 git add test-results.html
 git commit -m "Update test results"
 git push
+```
+
+---
+
+## Accessibility Testing with Axe
+
+You can integrate [axe-core](https://github.com/dequelabs/axe-core)
+to test accessibility.
+
+### 1. Install axe-core
+
+```sh
+npm install --save-dev axe-core
+```
+
+### 2. Create an accessibility helper
+
+```js
+// test/helpers/axe-helper.js
+import axe from 'axe-core'
+
+/**
+ * Run axe accessibility scan and assert no violations
+ *
+ * @param t - Tapzero tester
+ * @param {Partial<{ context, tags, rules }>} options Options object
+ */
+export async function assertNoViolations(
+  t,
+  options = {},
+  message = 'should have no accessibility violations'
+) {
+  const {
+    context = document,
+    tags = ['wcag2a', 'wcag2aa'],
+    rules = {}
+  } = options
+
+  const results = await axe.run(context, {
+    runOnly: { type: 'tag', values: tags },
+    rules
+  })
+
+  t.equal(results.violations.length, 0, message)
+
+  // Log violations for debugging
+  if (results.violations.length > 0) {
+    console.error('\n=== Accessibility Violations ===')
+    results.violations.forEach((violation, index) => {
+      console.error(`\n${index + 1}. ${violation.help}`)
+      console.error(`   Impact: ${violation.impact}`)
+      console.error(`   WCAG: ${violation.tags.filter(tag => tag.startsWith('wcag')).join(', ')}`)
+      console.error(`   Affected elements: ${violation.nodes.length}`)
+      violation.nodes.forEach((node, nodeIndex) => {
+        console.error(`     ${nodeIndex + 1}. ${node.html}`)
+        console.error(`        ${node.failureSummary}`)
+      })
+    })
+    console.error('\n================================\n')
+  }
+
+  return results
+}
+
+/**
+ * Check WCAG compliance level
+ */
+export async function assertWCAGCompliance(t, level = 'AA', options = {}) {
+  const tags = {
+    'A': ['wcag2a'],
+    'AA': ['wcag2a', 'wcag2aa'],
+    'AAA': ['wcag2a', 'wcag2aa', 'wcag2aaa']
+  }
+
+  return assertNoViolations(t, {
+    ...options,
+    tags: tags[level] || tags['AA']
+  }, `should meet WCAG ${level} compliance`)
+}
+```
+
+### 3. Use in your tests
+
+```js
+import { test } from '@substrate-system/tapzero'
+import {
+  assertNoViolations,
+  assertWCAGCompliance
+} from './helpers/axe-helper.js'
+
+test('page has no accessibility violations', async (t) => {
+  document.body.innerHTML = `
+    <main>
+      <h1>Welcome</h1>
+      <button>Click me</button>
+      <img src="test.jpg" alt="Test image" />
+    </main>
+  `
+
+  await assertNoViolations(t)
+})
+
+test('form meets WCAG AA compliance', async (t) => {
+  document.body.innerHTML = `
+    <form>
+      <label for="username">Username</label>
+      <input id="username" type="text" />
+
+      <label for="password">Password</label>
+      <input id="password" type="password" />
+
+      <button type="submit">Submit</button>
+    </form>
+  `
+
+  await assertWCAGCompliance(t, 'AA')
+})
+
+test('can test specific elements', async (t) => {
+  document.body.innerHTML = `
+    <nav aria-label="Main navigation">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  `
+
+  const nav = document.querySelector('nav')
+  await assertNoViolations(t, {
+    context: nav
+  }, 'navigation should be accessible')
+})
+
+test('cleanup', () => {
+  // @ts-expect-error browser global
+  window.testsFinished = true
+})
+```
+
+### 4. Run the accessibility tests
+
+```sh
+# Bundle and run
+npx esbuild test/a11y-test.js --bundle --format=esm | npx tapout | npx tap-spec
+
+# Or add to package.json scripts
+npm run test:a11y
+```
+
+### Advanced Use
+
+#### Test specific WCAG rules
+
+```js
+import axe from 'axe-core'
+
+test('check color contrast only', async (t) => {
+  document.body.innerHTML = `<div style="color: #333; background: #fff;">
+    Content
+  </div>`
+
+  const results = await axe.run(document, {
+    runOnly: { type: 'rule', values: ['color-contrast'] }
+  })
+
+  t.equal(results.violations.length, 0, 'should pass color contrast')
+})
+```
+
+#### Disable specific rules
+
+```js
+await assertNoViolations(t, {
+  rules: {
+    'color-contrast': { enabled: false }  // Skip incomplete styles
+  }
+})
+```
+
+#### Component testing
+
+```js
+import { MyComponent } from '../src/components/MyComponent.js'
+
+test('MyComponent is accessible', async (t) => {
+  const container = document.createElement('div')
+  document.body.appendChild(container)
+
+  // Render your component
+  const component = new MyComponent()
+  component.mount(container)
+
+  // Test accessibility
+  await assertNoViolations(t, { context: container })
+
+  container.remove()
+})
 ```
 
 ## Example Tests
@@ -283,17 +483,16 @@ Run the tests on the command line.
 npx esbuild ./test/index.ts | npx tapout
 ```
 
+## HTML report
+```sh
+# HTML reporter examples  
+npm run test:simple -- --reporter html     # Generate HTML report
+```
 
-### Tests
+### Test
 
 See the [`test/` directory](./test/).
 
 ```bash
 npm test
-```
-
-```sh
-# HTML reporter examples  
-npm run test:simple -- --reporter html     # Generate HTML report
-npm run test:complex -- --reporter html    # Complex test HTML report
 ```
