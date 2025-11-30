@@ -15,7 +15,7 @@ to [tape-run](https://github.com/tape-testing/tape-run).
 
 <!-- toc -->
 
-- [Featuring](#featuring)
+- [_Featuring_](#_featuring_)
 - [Install](#install)
 - [Use](#use)
   * [`window.testsFinished`](#windowtestsfinished)
@@ -25,9 +25,16 @@ to [tape-run](https://github.com/tape-testing/tape-run).
   * [`-b`, `--browser`](#-b---browser)
   * [`-t`, `--timeout`](#-t---timeout)
   * [`-r`, `--reporter`](#-r---reporter)
+  * [GitHub Pages Integration](#github-pages-integration)
 - [Accessibility Testing with Axe](#accessibility-testing-with-axe)
+  * [1. Install axe-core](#1-install-axe-core)
+  * [2. Create an accessibility helper](#2-create-an-accessibility-helper)
+  * [3. Use in your tests](#3-use-in-your-tests)
+  * [4. Run the accessibility tests](#4-run-the-accessibility-tests)
+  * [Advanced Use](#advanced-use)
 - [Example Tests](#example-tests)
-  * [Tests](#tests)
+- [HTML report](#html-report)
+  * [Test](#test)
 
 <!-- tocstop -->
 
