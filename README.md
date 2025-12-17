@@ -27,11 +27,7 @@ to [tape-run](https://github.com/tape-testing/tape-run).
   * [`-r`, `--reporter`](#-r---reporter)
   * [GitHub Pages Integration](#github-pages-integration)
 - [Accessibility Testing with Axe](#accessibility-testing-with-axe)
-  * [1. Install axe-core](#1-install-axe-core)
-  * [2. Create an accessibility helper](#2-create-an-accessibility-helper)
-  * [3. Use in your tests](#3-use-in-your-tests)
-  * [4. Run the accessibility tests](#4-run-the-accessibility-tests)
-  * [Advanced Use](#advanced-use)
+  * [Test specific WCAG rules](#test-specific-wcag-rules)
 - [Example Tests](#example-tests)
 - [HTML report](#html-report)
   * [Test](#test)
@@ -67,12 +63,12 @@ Examples:
 
 - **Cross-browser testing**: Run tests in Chrome, Firefox, Safari (WebKit),
   or Edge
-- **Vite support**: Automatic support for `import.meta.env` variables
+- **Vite compatible**: Support for `import.meta.env` variables
 - **Smart timeout handling**: Use custom timeouts or auto-timeout
-- **Beautiful HTML reports**: Generate HTML reports perfect for CI
+- **Beautiful HTML reports**: Generate HTML reports
 - **TAP compatible**: Standard TAP output works with any TAP formatter
 - **Zero configuration**: Just pipe JavaScript into this command
-- **CI/CD friendly**: Proper exit codes and error detection
+- **CI/CD friendly**: Proper exit codes
 
 ## Install
 
@@ -191,20 +187,25 @@ Possibilities are `chromium`, `firefox`, `webkit`, or `edge`.
 Pass in a different timeout value. The default is 10 seconds.
 
 The timeout respects the auto-finish behavior:
-- With **default timeout** (no `-t` flag): Auto-finish triggers after a short delay (1-2 seconds) when no test activity is detected
-- With **custom timeout** (using `-t`): Auto-finish uses 80% of the specified timeout, giving tests more time to complete naturally
+
+- With **default timeout** (no `-t` flag): Auto-finish triggers after a short
+  delay (1-2 seconds) when no test activity is detected
+- With **custom timeout** (using `-t`): Auto-finish uses 80% of the specified
+  timeout, giving tests more time to complete naturally
 
 ```sh
 cat test.js | npx tapout --timeout 5000
 ```
 
-**Error Detection**: tapout automatically detects and reports test failures from:
+**Errors**: tapout automatically detects test failures from:
+
 - Unhandled promise rejections
 - Uncaught exceptions  
 - Console error messages with common error patterns
 - TAP "not ok" results
 
-Tests will exit with code 1 if any errors are detected, making it perfect for CI/CD pipelines.
+Tests will exit with code 1 if any errors are detected, which is good for
+CI/CD pipelines.
 
 ### `-r`, `--reporter`
 
@@ -221,9 +222,6 @@ Choose the output format. Default is TAP.
 - `html` - Generate an HTML report file with beautiful, responsive design
 
 ```sh
-# Generate HTML report
-cat test.js | npx tapout --reporter html
-
 # Generate HTML and output to stdout
 cat test.js | npx tapout --reporter html > my-report.html
 
@@ -268,89 +266,16 @@ git push
 
 ## Accessibility Testing with Axe
 
-You can integrate [axe-core](https://github.com/dequelabs/axe-core)
-to test accessibility.
+See [Axe](https://github.com/dequelabs/axe-core-npm).
 
-### 1. Install axe-core
-
-```sh
-npm install --save-dev axe-core
-```
-
-### 2. Create an accessibility helper
-
-```js
-// test/helpers/axe-helper.js
-import axe from 'axe-core'
-
-/**
- * Run axe accessibility scan and assert no violations
- *
- * @param t - Tapzero tester
- * @param {Partial<{ context, tags, rules }>} options Options object
- */
-export async function assertNoViolations(
-  t,
-  options = {},
-  message = 'should have no accessibility violations'
-) {
-  const {
-    context = document,
-    tags = ['wcag2a', 'wcag2aa'],
-    rules = {}
-  } = options
-
-  const results = await axe.run(context, {
-    runOnly: { type: 'tag', values: tags },
-    rules
-  })
-
-  t.equal(results.violations.length, 0, message)
-
-  // Log violations for debugging
-  if (results.violations.length > 0) {
-    console.error('\n=== Accessibility Violations ===')
-    results.violations.forEach((violation, index) => {
-      console.error(`\n${index + 1}. ${violation.help}`)
-      console.error(`   Impact: ${violation.impact}`)
-      console.error(`   WCAG: ${violation.tags.filter(tag => tag.startsWith('wcag')).join(', ')}`)
-      console.error(`   Affected elements: ${violation.nodes.length}`)
-      violation.nodes.forEach((node, nodeIndex) => {
-        console.error(`     ${nodeIndex + 1}. ${node.html}`)
-        console.error(`        ${node.failureSummary}`)
-      })
-    })
-    console.error('\n================================\n')
-  }
-
-  return results
-}
-
-/**
- * Check WCAG compliance level
- */
-export async function assertWCAGCompliance(t, level = 'AA', options = {}) {
-  const tags = {
-    'A': ['wcag2a'],
-    'AA': ['wcag2a', 'wcag2aa'],
-    'AAA': ['wcag2a', 'wcag2aa', 'wcag2aaa']
-  }
-
-  return assertNoViolations(t, {
-    ...options,
-    tags: tags[level] || tags['AA']
-  }, `should meet WCAG ${level} compliance`)
-}
-```
-
-### 3. Use in your tests
+You can import some utilities from tapout:
 
 ```js
 import { test } from '@substrate-system/tapzero'
 import {
   assertNoViolations,
   assertWCAGCompliance
-} from './helpers/axe-helper.js'
+} from '@substrate-system/tapout/src/axe.js'
 
 test('page has no accessibility violations', async (t) => {
   document.body.innerHTML = `
@@ -396,39 +321,36 @@ test('can test specific elements', async (t) => {
   }, 'navigation should be accessible')
 })
 
+test('flexible WCAG level testing', async (t) => {
+  document.body.innerHTML = `<div>Content</div>`
+
+  // Letter levels
+  await assertWCAGCompliance(t, 'AA')
+
+  // Direct tag names
+  await assertWCAGCompliance(t, 'wcag2a')
+
+  // Multiple tags (useful for testing specific WCAG versions)
+  await assertWCAGCompliance(t, ['wcag2a', 'wcag21a'])
+})
+
 test('cleanup', () => {
   // @ts-expect-error browser global
   window.testsFinished = true
 })
 ```
 
-### 4. Run the accessibility tests
-
-```sh
-# Bundle and run
-npx esbuild test/a11y-test.js --bundle --format=esm | npx tapout | npx tap-spec
-
-# Or add to package.json scripts
-npm run test:a11y
-```
-
-### Advanced Use
-
-#### Test specific WCAG rules
+### Test specific WCAG rules
 
 ```js
-import axe from 'axe-core'
-
 test('check color contrast only', async (t) => {
   document.body.innerHTML = `<div style="color: #333; background: #fff;">
     Content
   </div>`
 
-  const results = await axe.run(document, {
+  await assertNoViolations(t, {
     runOnly: { type: 'rule', values: ['color-contrast'] }
-  })
-
-  t.equal(results.violations.length, 0, 'should pass color contrast')
+  }, 'should pass color contrast')
 })
 ```
 
@@ -498,7 +420,7 @@ npm run test:simple -- --reporter html     # Generate HTML report
 
 ### Test
 
-See the [`test/` directory](./test/).
+Run the tests for this module. See the [`test/` directory](./test/).
 
 ```bash
 npm test

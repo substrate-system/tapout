@@ -5,7 +5,7 @@
     "target": "ES2022",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-    "lib": ["ES2021"],
+    "lib": ["DOM", "ES2021"],
     "allowJs": false,
     "skipLibCheck": true,
     "outDir": "dist",
