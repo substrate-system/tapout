@@ -275,7 +275,7 @@ import { test } from '@substrate-system/tapzero'
 import {
   assertNoViolations,
   assertWCAGCompliance
-} from '@substrate-system/tapout/src/axe.js'
+} from '@substrate-system/tapout/axe.js'
 
 test('page has no accessibility violations', async (t) => {
   document.body.innerHTML = `
