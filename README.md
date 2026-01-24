@@ -76,6 +76,16 @@ Examples:
 npm i -D @substrate-system/tapout
 ```
 
+### Install Playwright Dependencies
+
+After installing this, you will need to install dependencies for Playwright
+also.
+
+```sh
+npx playwright install msedge --with-deps
+```
+
+
 ## Use
 
 Pipe some Javascript to this command.
