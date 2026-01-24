@@ -17,6 +17,7 @@ to [tape-run](https://github.com/tape-testing/tape-run).
 
 - [_Featuring_](#_featuring_)
 - [Install](#install)
+  * [Install Playwright Dependencies](#install-playwright-dependencies)
 - [Use](#use)
   * [`window.testsFinished`](#windowtestsfinished)
   * [Vite environment variables](#vite-environment-variables)
