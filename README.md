@@ -83,7 +83,7 @@ After installing this, you will need to install dependencies for Playwright
 also.
 
 ```sh
-npx playwright install msedge --with-deps
+npx playwright install --with-deps
 ```
 
 
