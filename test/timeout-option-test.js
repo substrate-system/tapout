@@ -50,6 +50,30 @@ test('CLI timeout option (-t) works correctly', async (t) => {
     )
 })
 
+test('CLI custom timeout should not auto-finish after ~3 seconds', async (t) => {
+    const delayedCompletionTest = `
+console.log('TAP version 13')
+console.log('1..1')
+setTimeout(() => {
+    console.log('ok 1 - delayed completion after 4 seconds')
+    window.testsFinished = true
+}, 4000)
+`
+
+    const result = await runCliWithInput(delayedCompletionTest, 10000)
+
+    t.equal(result.exitCode, 0, 'should exit successfully with 10 second timeout')
+    t.ok(
+        result.stdout.includes('ok 1 - delayed completion after 4 seconds'),
+        'should wait for the 4 second test completion output'
+    )
+    t.equal(
+        result.stdout.includes('Tests auto-finished'),
+        false,
+        'should not auto-finish before delayed test completion'
+    )
+})
+
 async function bundleTestFile(testFilePath) {
     const result = await build({
         entryPoints: [testFilePath],

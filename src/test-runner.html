@@ -12,17 +12,20 @@
       const isCustomTimeout = urlParams.get('custom') === 'true'
       const noAutoFinish = urlParams.get('noAutoFinish') === 'true'
       
-      // When a custom timeout is provided, use a much longer auto-finish delay
-      // to give tests time to complete naturally, but still have a fallback
+      // For custom timeouts, keep the auto-finish close to the requested timeout
+      // instead of forcing a fixed 2-3 second cap.
       let autoFinishDelay
       if (noAutoFinish) {
         // If auto-finish is disabled, we still need some fallback
         // Use the full timeout as the delay
         autoFinishDelay = timeoutMs
       } else if (isCustomTimeout) {
-        // For custom timeouts, use 25% of timeout (min 2s, max 3s) as auto-finish delay
-        // This gives tests 75% of the timeout to run, while auto-finish waits 2-3s
-        autoFinishDelay = Math.min(Math.max(timeoutMs * 0.25, 2000), 3000)
+        // Use 80% of the provided timeout and keep a small buffer so the
+        // outer wait timeout does not win the race.
+        autoFinishDelay = Math.max(
+          1000,
+          Math.min(timeoutMs - 250, Math.floor(timeoutMs * 0.8))
+        )
       } else {
         // Use a reasonable auto-finish delay for default timeout
         autoFinishDelay = Math.max(500, Math.min(5000, timeoutMs * 0.2))
