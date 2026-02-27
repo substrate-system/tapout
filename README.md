@@ -43,7 +43,7 @@ This uses [playwright](https://playwright.dev/) under the hood.
 Usage: tapout [options]
             
 Options:
-  -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
+  -t, --timeout <ms>    Timeout in milliseconds (default: 5000)
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -r, --reporter <name> Output format: tap, html (default: tap)
   --outdir <path>       Output directory for HTML reports (default: current directory)
@@ -195,7 +195,7 @@ Possibilities are `chromium`, `firefox`, `webkit`, or `edge`.
 
 ### `-t`, `--timeout`
 
-Pass in a different timeout value. The default is 10 seconds.
+Pass in a different timeout value. The default is 5 seconds.
 
 The timeout respects the auto-finish behavior:
 

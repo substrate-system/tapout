@@ -7,7 +7,7 @@ console.log('1..1')
 
 // Access the timeout parameters that should be set by test-runner.html
 const urlParams = new URLSearchParams(window.location.search)
-const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
+const timeoutMs = parseInt(urlParams.get('timeout')) || 5000
 
 if (timeoutMs > 0) {
     console.log('ok 1 - timeout parameter is properly passed to test runner')

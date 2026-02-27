@@ -74,6 +74,28 @@ setTimeout(() => {
     )
 })
 
+test('CLI default timeout should be 5000ms when --timeout is not provided', async (t) => {
+    const timeoutProbeTest = `
+console.log('TAP version 13')
+console.log('1..1')
+const timeoutMs = new URLSearchParams(window.location.search).get('timeout')
+if (timeoutMs === '5000') {
+    console.log('ok 1 - default timeout is 5000ms')
+} else {
+    console.log('not ok 1 - default timeout should be 5000ms, got ' + timeoutMs)
+}
+window.testsFinished = true
+`
+
+    const result = await runCliWithInputAndArgs(timeoutProbeTest, [], 7000)
+
+    t.equal(result.exitCode, 0, 'should exit with code 0 using default timeout')
+    t.ok(
+        result.stdout.includes('ok 1 - default timeout is 5000ms'),
+        'should pass timeout probe when default is 5000ms'
+    )
+})
+
 async function bundleTestFile(testFilePath) {
     const result = await build({
         entryPoints: [testFilePath],
@@ -88,10 +110,18 @@ async function bundleTestFile(testFilePath) {
 }
 
 function runCliWithInput(testCode, timeoutMs) {
+    return runCliWithInputAndArgs(
+        testCode,
+        ['--timeout', timeoutMs.toString()],
+        timeoutMs + 2000
+    )
+}
+
+function runCliWithInputAndArgs(testCode, cliArgs, harnessTimeoutMs) {
     return new Promise((resolve) => {
         const child = spawn(
             'node',
-            [cliPath, '--timeout', timeoutMs.toString()],
+            [cliPath, ...cliArgs],
             {
                 cwd: projectRoot,
                 stdio: ['pipe', 'pipe', 'pipe']
@@ -101,15 +131,15 @@ function runCliWithInput(testCode, timeoutMs) {
         let stdout = ''
         let stderr = ''
 
-        // Set a test timeout slightly longer than the CLI timeout
+        // Set a harness timeout slightly longer than expected CLI completion
         const testTimeout = setTimeout(() => {
             child.kill('SIGTERM')
             resolve({
                 exitCode: null,
                 stdout,
-                stderr: stderr + `Test timed out after ${timeoutMs + 2000}ms`
+                stderr: stderr + `Test timed out after ${harnessTimeoutMs}ms`
             })
-        }, timeoutMs + 2000)
+        }, harnessTimeoutMs)
 
         child.stdout.on('data', (data) => {
             stdout += data.toString()

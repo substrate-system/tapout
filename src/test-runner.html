@@ -6,9 +6,9 @@
   </head>
   <body>
     <script type="module">
-      // Get timeout from URL parameters, default to 10000ms
+      // Get timeout from URL parameters, default to 5000ms
       const urlParams = new URLSearchParams(window.location.search)
-      const timeoutMs = parseInt(urlParams.get('timeout')) || 10000
+      const timeoutMs = parseInt(urlParams.get('timeout')) || 5000
       const isCustomTimeout = urlParams.get('custom') === 'true'
       const noAutoFinish = urlParams.get('noAutoFinish') === 'true'
       

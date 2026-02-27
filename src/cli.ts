@@ -6,7 +6,7 @@ function showHelp () {
     console.log(`Usage: tapout [options]
 
 Options:
-  -t, --timeout <ms>    Timeout in milliseconds (default: 10000)
+  -t, --timeout <ms>    Timeout in milliseconds (default: 5000)
   -b, --browser <name>  Browser to use: chromium, firefox, webkit, edge (default: chromium)
   -r, --reporter <name> Output format: tap, html (default: tap)
   --outdir <path>       Output directory for HTML reports (default: current directory)
@@ -25,7 +25,7 @@ Examples:
 
 function parseArgs () {
     const args = process.argv.slice(2)
-    let timeout = 10000  // default 10 seconds
+    let timeout = 5000  // default 5 seconds
     let browser:'chromium'|'firefox'|'webkit'|'edge' = 'chromium'  // default chrome
     let reporter: 'tap' | 'html' = 'tap'  // default TAP output
     let outdir: string | undefined

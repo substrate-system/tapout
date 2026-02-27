@@ -123,7 +123,7 @@ export async function runTestsInBrowser (
     } = {}
 ):Promise<void> {
     const PORT = 8123
-    const timeout = options.timeout || 10000
+    const timeout = options.timeout || 5000
     const customTimeout = options.customTimeout || false
     const browserType = options.browser || 'chromium'
     const reporter = options.reporter || 'tap'
